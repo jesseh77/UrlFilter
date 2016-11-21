@@ -15,11 +15,10 @@ namespace UrlFilter.Tests
         public void should_match_one_document_with_eq_expression()
         {
             var expectedValue = 3;
-            var queryString = $"value eq {expectedValue}";
+            var queryString = $"Value eq {expectedValue}";
             var testDocs = GetTestDocuments(10);
             
-            var query = QueryString<TestDocument>.Process(queryString);
-            var result = testDocs.Provider.CreateQuery<TestDocument>(query);
+            var result = QueryString<TestDocument>.Process(queryString, testDocs);
 
             foreach (var doc in result)
             {
