@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 
 namespace UrlFilter
@@ -15,7 +11,9 @@ namespace UrlFilter
         {
             var segments = queryString.Split(' ');
             var paramExpression = Expression.Parameter(typeof(T));
-            var prop = typeof(T).GetRuntimeProperty(segments[0]);
+
+            var prop = GetPropertyInfo(segments[0]);
+
             var left = Expression.Property(paramExpression, prop);
 
             var propValue = FromString(segments[2]);
@@ -23,6 +21,12 @@ namespace UrlFilter
             var expression = ExpressionOperators.OperatorExpression(segments[1], left, right);
 
             return Expression.Lambda<Func<T, bool>>(expression, paramExpression);
+        }
+
+        private static PropertyInfo GetPropertyInfo(string propertyName)
+        {
+            return typeof(T).GetRuntimeProperties()
+                .Single(x => x.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
         }
 
         private static int FromString(string value)
