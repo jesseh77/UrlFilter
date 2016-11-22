@@ -11,7 +11,7 @@ namespace UrlFilter
 {
     public static class QueryString<T> where T : class
     {        
-        public static IEnumerable<T> Process(string queryString, IQueryable<T> data)
+        public static Expression<Func<T,bool>> GetWhereExpression(string queryString)
         {
             var segments = queryString.Split(' ');
             var paramExpression = Expression.Parameter(typeof(T));
@@ -20,10 +20,9 @@ namespace UrlFilter
 
             var propValue = FromString(segments[2]);
             var right = Expression.Constant(propValue);
-            var expression = Expression.Equal(left, right);
-            var callExpression = GetCallExpression(expression, paramExpression, data);
-            var results = data.Provider.CreateQuery<T>(callExpression).ToList();
-            return results;
+            var expression = ExpressionOperators.OperatorExpression(segments[1], left, right);
+
+            return Expression.Lambda<Func<T, bool>>(expression, paramExpression);
         }
 
         private static int FromString(string value)
@@ -34,18 +33,6 @@ namespace UrlFilter
                 return val;
             }
             throw new InvalidCastException($"Pameter {value} is not a valid integer");
-        }
-
-        private static MethodCallExpression GetCallExpression(Expression expression, ParameterExpression paramExpression, IQueryable data)
-        {
-            var callExpression = Expression.Call(
-                typeof(Queryable),
-                "Where",
-                new[] {typeof(T)},
-                data.Expression,
-                Expression.Lambda<Func<T, bool>>(expression, paramExpression));
-
-            return callExpression;
         }
     }
 }

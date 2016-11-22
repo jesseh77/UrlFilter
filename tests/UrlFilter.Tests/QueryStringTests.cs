@@ -18,7 +18,8 @@ namespace UrlFilter.Tests
             var queryString = $"Value eq {expectedValue}";
             var testDocs = GetTestDocuments(10);
             
-            var result = QueryString<TestDocument>.Process(queryString, testDocs);
+            var expression = QueryString<TestDocument>.GetWhereExpression(queryString);
+            var result = testDocs.Where(expression);
 
             foreach (var doc in result)
             {
