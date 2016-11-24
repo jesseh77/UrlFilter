@@ -9,8 +9,9 @@ namespace UrlFilter
 
         public static Precedence GetOperatorPrecedence(string operation)
         {
+            var operationName = operation.Trim().ToLowerInvariant();
             Precedence precedence;
-            if (Precedences.TryGetValue(operation, out precedence))
+            if (Precedences.TryGetValue(operationName, out precedence))
             {
                 return precedence;
             }

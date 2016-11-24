@@ -11,16 +11,17 @@ namespace UrlFilter
         public static Expression<Func<T,bool>> GetWhereExpression(string queryString)
         {
             var segments = GetWhereSegments(queryString);
-            var expression = ReduceQuerySegments(segments);
             var paramExpression = Expression.Parameter(typeof(T));
+
+            var expression = ReduceQuerySegments(segments, paramExpression);
 
             return Expression.Lambda<Func<T, bool>>(expression, paramExpression);
         }
 
-        private static Expression ReduceQuerySegments(LinkedList<Token> tokens)
+        private static Expression ReduceQuerySegments(LinkedList<Token> tokens, ParameterExpression paramExpression)
         {
-            ProcessEqualityAndRelational(tokens, OperatorPrecedence.Precedence.Relational);
-            ProcessEqualityAndRelational(tokens, OperatorPrecedence.Precedence.Equality);
+            ProcessEqualityAndRelational(tokens, OperatorPrecedence.Precedence.Relational, paramExpression);
+            ProcessEqualityAndRelational(tokens, OperatorPrecedence.Precedence.Equality, paramExpression);
             ProcessConditional(tokens, OperatorPrecedence.Precedence.ConditionalAnd);
             ProcessConditional(tokens, OperatorPrecedence.Precedence.ConditionalOr);
 
@@ -52,16 +53,16 @@ namespace UrlFilter
             return tokens;
         }
 
-        private static LinkedList<Token> ProcessEqualityAndRelational(LinkedList<Token> tokens, OperatorPrecedence.Precedence operation)
+        private static LinkedList<Token> ProcessEqualityAndRelational(LinkedList<Token> tokens, OperatorPrecedence.Precedence operation, ParameterExpression paramExpression)
         {
             var current = tokens.First;
-            while (current.Next.Next != null)
+            while (current.Next != null)
             {
                 if (current.Next.Value.GroupPriority == operation)
                 {
                     var propertyInfo = GetPropertyInfo(current.Value.TokenValue);
                     current.Next.Value.OperatorExpression = TokenToExpression(
-                        propertyInfo, current.Next.Value.TokenValue, current.Next.Next.Value.TokenValue);
+                        propertyInfo, current.Next.Value.TokenValue, current.Next.Next.Value.TokenValue, paramExpression);
 
                     tokens.Remove(current.Next.Next);
                     var next = current.Next;
@@ -76,9 +77,12 @@ namespace UrlFilter
             return tokens;
         }
 
-        private static Expression TokenToExpression(PropertyInfo property, string operation, string value)
+        private static Expression TokenToExpression(PropertyInfo property, string operation, string value, ParameterExpression paramExpression)
         {
-            var paramExpression = Expression.Parameter(typeof(T));
+            if (property.PropertyType == typeof(string) && value[0] == '\'' && value[value.Length -1] == '\'')
+            {
+                value = value.Substring(1, value.Length -2);
+            }
             var leftExpression = Expression.Property(paramExpression, property);
 
             var propValue = Convert.ChangeType(value, property.PropertyType);
@@ -91,7 +95,7 @@ namespace UrlFilter
         private static LinkedList<Token> GetWhereSegments(string queryString)
         {
             var query = queryString.Replace("(", " ( ").Replace(")", " ) ").Split(' ');
-            var tokens = query.Select(x => new Token
+            var tokens = query.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => new Token
             {
                 GroupPriority = OperatorPrecedence.GetOperatorPrecedence(x),
                 TokenValue = x
@@ -104,16 +108,6 @@ namespace UrlFilter
         {
             return typeof(T).GetRuntimeProperties()
                 .Single(x => x.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
-        }
-
-        private static int FromString(string value)
-        {
-            int val;
-            if (int.TryParse(value, out val))
-            {
-                return val;
-            }
-            throw new InvalidCastException($"Pameter {value} is not a valid integer");
         }
     }
 }

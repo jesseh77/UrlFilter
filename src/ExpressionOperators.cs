@@ -9,7 +9,7 @@ namespace UrlFilter
         private static readonly Dictionary<string, Func<Expression, Expression, Expression>> Expressions = GetExpressions();
         public static Expression OperatorExpression(string operation, Expression left, Expression right)
         {
-            var lowerOperation = operation.ToLowerInvariant();
+            var lowerOperation = operation.Trim().ToLowerInvariant();
             Func<Expression, Expression, Expression> expression;
             if (Expressions.TryGetValue(lowerOperation, out expression))
             {
