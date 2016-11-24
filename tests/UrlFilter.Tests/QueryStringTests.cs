@@ -31,6 +31,15 @@ namespace UrlFilter.Tests
         [InlineData(10, 3, "value le 3")]
         [InlineData(10, 9, "value ne 3")]
         [InlineData(10, 1, "value eq 3")]
+        [InlineData(10, 2, "value gt 3 and value le 5")]
+        [InlineData(10, 3, "value gt 3 and value le 5 or value le 1")]
+        [InlineData(10, 1, "value eq 3")]
+        [InlineData(10, 1, "value eq 3")]
+        [InlineData(10, 1, "value eq 3")]
+        [InlineData(10, 1, "value eq 3")]
+        [InlineData(10, 1, "text eq 'Text7'")]
+        [InlineData(10, 2, "text eq 'Text7' or text eq 'Text2'")]
+        [InlineData(10, 2, "text eq 'Text7' and value gt 5")]
         public void should_return_match_count(int testDocQuantity, int expectedCount, string filterString)
         {
             var testDocs = GetTestDocuments(testDocQuantity);

@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace UrlFilter
 {
-    public static class ExpressionOperators
+    internal static class ExpressionOperators
     {
         private static readonly Dictionary<string, Func<Expression, Expression, Expression>> Expressions = GetExpressions();
         public static Expression OperatorExpression(string operation, Expression left, Expression right)
