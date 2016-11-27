@@ -60,9 +60,27 @@ namespace UrlFilter
             {
                 if (current.Next.Value.GroupPriority == operation)
                 {
-                    var propertyInfo = GetPropertyInfo(current.Value.TokenValue);
-                    current.Next.Value.OperatorExpression = TokenToExpression(
-                        propertyInfo, current.Next.Value.TokenValue, current.Next.Next.Value.TokenValue, paramExpression);
+                    var propertyName = current.Value.TokenValue;
+
+                    var segments = propertyName.Split('.');
+                    Expression parameterExpression = Expression.Parameter(typeof(T));
+                    PropertyInfo propertyInfo = null;
+                    Type propertyType = typeof(T);
+
+                    foreach (var segment in segments)
+                    {
+                        propertyInfo = GetPropertyInfo(propertyType, segment);
+                        parameterExpression = Expression.Property(parameterExpression, propertyInfo);
+                        propertyType = propertyInfo.PropertyType;
+                    }
+
+                    var value = StripOuterSingleQuotes(current.Next.Next.Value.TokenValue);
+                    var operationType = current.Next.Value.TokenValue;
+
+                    var propValue = Convert.ChangeType(value, propertyInfo.PropertyType);
+                    var rightExpression = Expression.Constant(propValue);
+
+                    var expression = ExpressionOperators.OperatorExpression(operationType, parameterExpression, rightExpression);
 
                     tokens.Remove(current.Next.Next);
                     var next = current.Next;
@@ -77,19 +95,13 @@ namespace UrlFilter
             return tokens;
         }
 
-        private static Expression TokenToExpression(PropertyInfo property, string operation, string value, ParameterExpression paramExpression)
+        private static string StripOuterSingleQuotes(string value)
         {
-            if (property.PropertyType == typeof(string) && value[0] == '\'' && value[value.Length -1] == '\'')
+            if (value[0] == '\'' && value[value.Length - 1] == '\'')
             {
-                value = value.Substring(1, value.Length -2);
+                return value.Substring(1, value.Length - 2);
             }
-            var leftExpression = Expression.Property(paramExpression, property);
-
-            var propValue = Convert.ChangeType(value, property.PropertyType);
-            var rightExpression = Expression.Constant(propValue);
-
-            var expression = ExpressionOperators.OperatorExpression(operation, leftExpression, rightExpression);
-            return expression;
+            return value;
         }
 
         private static LinkedList<Token> GetWhereSegments(string queryString)
@@ -104,10 +116,10 @@ namespace UrlFilter
             return new LinkedList<Token>(tokens);
         }
 
-        private static PropertyInfo GetPropertyInfo(string propertyName)
+        private static PropertyInfo GetPropertyInfo(Type type, string name)
         {
-            return typeof(T).GetRuntimeProperties()
-                .Single(x => x.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
+            return type.GetRuntimeProperties()
+                .Single(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
