@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("UrlFilter")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Builds linq expressions from query string filters")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Jesse H")]
 [assembly: AssemblyProduct("UrlFilter")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
