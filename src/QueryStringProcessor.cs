@@ -63,7 +63,7 @@ namespace UrlFilter
                     var propertyName = current.Value.TokenValue;
 
                     var segments = propertyName.Split('.');
-                    Expression parameterExpression = Expression.Parameter(typeof(T));
+                    Expression parameterExpression = paramExpression;
                     PropertyInfo propertyInfo = null;
                     Type propertyType = typeof(T);
 
@@ -81,6 +81,7 @@ namespace UrlFilter
                     var rightExpression = Expression.Constant(propValue);
 
                     var expression = ExpressionOperators.OperatorExpression(operationType, parameterExpression, rightExpression);
+                    current.Next.Value.OperatorExpression = expression;
 
                     tokens.Remove(current.Next.Next);
                     var next = current.Next;
