@@ -8,5 +8,6 @@ namespace UrlFilter
         public OperatorPrecedence.Precedence GroupPriority { get; set; }
         public int ItemPriority { get; set; }
         public Expression OperatorExpression { get; set; }
+        public bool IsNot { get; set; }
     }
 }

@@ -34,9 +34,9 @@ namespace UrlFilter.Tests
         [InlineData(10, 1, "value eq 3")]
         [InlineData(10, 2, "value gt 3 and value le 5")]
         [InlineData(10, 3, "value gt 3 and value le 5 or value le 1")]
-        [InlineData(10, 1, "value eq 3")]
-        [InlineData(10, 1, "value eq 3")]
-        [InlineData(10, 1, "value eq 3")]
+        [InlineData(10, 9, "not value eq 3")]
+        [InlineData(10, 7, "not value gt 7")]
+        [InlineData(10, 2, "not value eq 3 and value lt 4")]
         [InlineData(10, 1, "value eq 3")]
         [InlineData(10, 1, "text eq 'Item7'")]
         [InlineData(10, 1, "text eq Item7")]
@@ -48,7 +48,7 @@ namespace UrlFilter.Tests
             var testDocs = GetTestDocuments(qty);
 
             var expression = QueryString<TestDocument>.GetWhereExpression(query);
-            var result = testDocs.Where(expression);
+            var result = testDocs.Where(expression).ToList();
 
             result.Count().Should().Be(expected);
         }

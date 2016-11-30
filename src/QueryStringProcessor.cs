@@ -20,12 +20,35 @@ namespace UrlFilter
 
         private static Expression ReduceQuerySegments(LinkedList<Token> tokens, ParameterExpression paramExpression)
         {
+            ProcessUnary(tokens, OperatorPrecedence.Precedence.Unary);
             ProcessEqualityAndRelational(tokens, OperatorPrecedence.Precedence.Relational, paramExpression);
             ProcessEqualityAndRelational(tokens, OperatorPrecedence.Precedence.Equality, paramExpression);
             ProcessConditional(tokens, OperatorPrecedence.Precedence.ConditionalAnd);
             ProcessConditional(tokens, OperatorPrecedence.Precedence.ConditionalOr);
 
             return tokens.First.Value.OperatorExpression;
+        }
+
+        private static LinkedList<Token> ProcessUnary(LinkedList<Token> tokens, OperatorPrecedence.Precedence operation)
+        {
+            var current = tokens.First;
+            while (current.Next != null)
+            {
+                if (current.Value.GroupPriority == operation)
+                {
+                    current.Next.Next.Value.IsNot = true;
+
+                    var next = current.Next;
+                    tokens.Remove(current);
+                    current = next;
+                }
+                else
+                {
+                    current = current.Next;
+                }
+            }
+
+            return tokens;
         }
 
         private static LinkedList<Token> ProcessConditional(LinkedList<Token> tokens, OperatorPrecedence.Precedence operation)
@@ -38,7 +61,7 @@ namespace UrlFilter
                     current.Next.Value.OperatorExpression =
                         ExpressionOperators.OperatorExpression(current.Next.Value.TokenValue,
                             current.Value.OperatorExpression, current.Next.Next.Value.OperatorExpression);
-
+                    
                     tokens.Remove(current.Next.Next);
                     var next = current.Next;
                     tokens.Remove(current);
@@ -81,6 +104,11 @@ namespace UrlFilter
                     var rightExpression = Expression.Constant(propValue);
 
                     var expression = ExpressionOperators.OperatorExpression(operationType, parameterExpression, rightExpression);
+                    if (current.Next.Value.IsNot)
+                    {
+                        expression = Expression.Not(expression);
+                    }
+
                     current.Next.Value.OperatorExpression = expression;
 
                     tokens.Remove(current.Next.Next);
