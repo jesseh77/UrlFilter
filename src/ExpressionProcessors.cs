@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UrlFilter
 {
     internal static class ExpressionProcessors
     {
-        internal static LinkedList<Token> ProcessConditional(LinkedList<Token> tokens, OperatorPrecedence.Precedence operation)
+        internal static void ProcessConditional(LinkedList<Token> tokens, OperatorPrecedence.Precedence operation)
         {
             var current = tokens.First;
             while (current.Next != null)
@@ -32,10 +30,9 @@ namespace UrlFilter
                 }
 
             }
-            return tokens;
         }
 
-        internal static LinkedList<Token> ProcessUnary(LinkedList<Token> tokens, OperatorPrecedence.Precedence operation)
+        internal static void ProcessUnary(LinkedList<Token> tokens, OperatorPrecedence.Precedence operation)
         {
             var current = tokens.First;
             while (current.Next != null)
@@ -53,11 +50,9 @@ namespace UrlFilter
                     current = current.Next;
                 }
             }
-
-            return tokens;
         }
 
-        internal static LinkedList<Token> ProcessEqualityAndRelational<T>(LinkedList<Token> tokens, OperatorPrecedence.Precedence operation, ParameterExpression paramExpression)
+        internal static void ProcessEqualityAndRelational<T>(LinkedList<Token> tokens, OperatorPrecedence.Precedence operation, ParameterExpression paramExpression)
         {
             var current = tokens.First;
             while (current.Next != null)
@@ -102,7 +97,6 @@ namespace UrlFilter
                     current = current.Next;
                 }
             }
-            return tokens;
         }
 
         private static PropertyInfo GetPropertyInfo(Type type, string name)

@@ -36,8 +36,10 @@
   <ItemGroup>
     <Compile Include="ExpressionOperators.cs" />
     <Compile Include="ExpressionProcessors.cs" />
+    <Compile Include="ExpressionReducer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryStringProcessor.cs" />
+    <Compile Include="WhereExpression.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="OperatorPrecedence.cs" />
   </ItemGroup>
