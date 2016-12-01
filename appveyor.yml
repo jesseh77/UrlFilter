@@ -6,4 +6,6 @@ deploy:
   api_key:
     secure: /CRVOWwBjL+5HdnNQlKNu049zushOyHsoG/3weq7Re7/msT+z2/hXABNtkdBTkVb
   skip_symbols: false
-  artifact: /.*\.nupkg/
+
+artifacts:
+  - path: '**\*.nupkg'
