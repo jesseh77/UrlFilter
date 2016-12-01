@@ -50,7 +50,7 @@ namespace UrlFilter.Tests
             var expression = QueryString<TestDocument>.GetWhereExpression(query);
             var result = testDocs.Where(expression).ToList();
 
-            result.Count().Should().Be(expected);
+            result.Count.Should().Be(expected);
         }
 
         private static IQueryable<TestDocument> GetTestDocuments(int quantity)

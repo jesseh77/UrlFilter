@@ -35,6 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ExpressionOperators.cs" />
+    <Compile Include="ExpressionProcessors.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryStringProcessor.cs" />
     <Compile Include="Token.cs" />
