@@ -8,4 +8,4 @@ deploy:
   skip_symbols: false
 
 artifacts:
-  - path: '**\*.nupkg'
+  - path: 'src\**\*.nupkg'
