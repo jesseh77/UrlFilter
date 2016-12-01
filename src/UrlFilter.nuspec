@@ -10,6 +10,6 @@
     <description>$description$</description>
     <releaseNotes>Initial publish</releaseNotes>
     <copyright>Copyright 2016</copyright>
-    <tags>linq expression url</tags>
+    <tags>linq expression url filter</tags>
   </metadata>
 </package>
