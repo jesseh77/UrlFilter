@@ -11,6 +11,7 @@ namespace UrlFilter.Tests
         [InlineData(10, "value EQ 3", new[] { 3 })]
         [InlineData(10, "value eq 3 ", new[] { 3 })]
         [InlineData(10, "subdocument.value eq 300", new[] { 3 })]
+        [InlineData(10, "subdocument.subdocument.value eq 300", new int[] { })]
         [InlineData(10, "value gt 3", new [] {4,5,6,7,8,9,10})]
         [InlineData(10, "value ge 7", new [] {7,8,9,10})]
         [InlineData(10, "value lt 8", new [] {1,2,3,4,5,6,7})]
@@ -38,6 +39,15 @@ namespace UrlFilter.Tests
 
             result.Select(x => x.Value).Should().BeEquivalentTo(expectedValues);
         }
+
+        //[Theory(DisplayName ="Exceptions")]
+        //public void should_throw_exception(int qty, string query)
+        //{
+        //    var testDocs = GetTestDocuments(qty);
+
+        //    var expression = WhereExpression.Build.FromString<TestDocument>(query);
+            
+        //}
 
         private static IQueryable<TestDocument> GetTestDocuments(int quantity)
         {

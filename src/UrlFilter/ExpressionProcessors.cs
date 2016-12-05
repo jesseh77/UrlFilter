@@ -40,7 +40,6 @@ namespace UrlFilter
                 if (current.Value.GroupPriority == operation)
                 {
                     current.Next.Next.Value.IsNot = true;
-
                     var next = current.Next;
                     tokens.Remove(current);
                     current = next;
@@ -61,16 +60,26 @@ namespace UrlFilter
                 {
                     var propertyName = current.Value.TokenValue;
 
-                    var segments = propertyName.Split('.');
+                    var propertySegments = propertyName.Split('.');
                     Expression parameterExpression = paramExpression;
+                    Expression returnExpression = null;
                     PropertyInfo propertyInfo = null;
                     Type propertyType = typeof(T);
+                    var segmentCount = propertySegments.Count();
 
-                    foreach (var segment in segments)
+                    for (int i = 0; i < segmentCount; i++)
                     {
+                        var segment = propertySegments[i];
+                    
                         propertyInfo = GetPropertyInfo(propertyType, segment);
                         parameterExpression = Expression.Property(parameterExpression, propertyInfo);
                         propertyType = propertyInfo.PropertyType;
+
+                        if (i != segmentCount - 1)
+                        {
+                            var notNullExpression = Expression.NotEqual(parameterExpression, Expression.Constant(null, typeof(object)));
+                            returnExpression = AndAlso(returnExpression, notNullExpression);
+                        }                        
                     }
 
                     var value = StripOuterSingleQuotes(current.Next.Next.Value.TokenValue);
@@ -79,13 +88,13 @@ namespace UrlFilter
                     var propValue = Convert.ChangeType(value, propertyInfo.PropertyType);
                     var rightExpression = Expression.Constant(propValue);
 
-                    var expression = ExpressionOperators.OperatorExpression(operationType, parameterExpression, rightExpression);
+                    returnExpression = ExpressionOperators.OperatorExpression(operationType, parameterExpression, rightExpression);
                     if (current.Next.Value.IsNot)
                     {
-                        expression = Expression.Not(expression);
+                        returnExpression = Expression.Not(returnExpression);
                     }
 
-                    current.Next.Value.OperatorExpression = expression;
+                    current.Next.Value.OperatorExpression = returnExpression;
 
                     tokens.Remove(current.Next.Next);
                     var next = current.Next;
@@ -97,6 +106,15 @@ namespace UrlFilter
                     current = current.Next;
                 }
             }
+        }
+
+        private static Expression AndAlso(Expression left, Expression right)
+        {
+            if (left == null)
+            {
+                return right;
+            }
+            return Expression.AndAlso(left, right);
         }
 
         private static PropertyInfo GetPropertyInfo(Type type, string name)
