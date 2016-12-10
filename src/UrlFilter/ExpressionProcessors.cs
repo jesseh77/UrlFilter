@@ -88,12 +88,14 @@ namespace UrlFilter
                     var propValue = Convert.ChangeType(value, propertyInfo.PropertyType);
                     var rightExpression = Expression.Constant(propValue);
 
-                    returnExpression = ExpressionOperators.OperatorExpression(operationType, parameterExpression, rightExpression);
+                    var tailExpression = ExpressionOperators.OperatorExpression(operationType, parameterExpression, rightExpression);
+
                     if (current.Next.Value.IsNot)
                     {
-                        returnExpression = Expression.Not(returnExpression);
+                        tailExpression = Expression.Not(tailExpression);
                     }
 
+                    returnExpression = AndAlso(returnExpression, tailExpression);
                     current.Next.Value.OperatorExpression = returnExpression;
 
                     tokens.Remove(current.Next.Next);

@@ -11,6 +11,7 @@ namespace UrlFilter.Tests
         [InlineData(10, "value EQ 3", new[] { 3 })]
         [InlineData(10, "value eq 3 ", new[] { 3 })]
         [InlineData(10, "subdocument.value eq 300", new[] { 3 })]
+        [InlineData(10, "subdocument.value ge 300 and subdocument.value lt 999", new[] { 3, 4, 5, 6, 7, 8, 9 })]
         [InlineData(10, "subdocument.subdocument.value eq 300", new int[] { })]
         [InlineData(10, "value gt 3", new [] {4,5,6,7,8,9,10})]
         [InlineData(10, "value ge 7", new [] {7,8,9,10})]
