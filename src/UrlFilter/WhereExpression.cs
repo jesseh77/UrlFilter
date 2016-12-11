@@ -5,9 +5,9 @@ using System.Linq.Expressions;
 
 namespace UrlFilter
 {
-    public class WhereExpression
+    public class WhereExpression : IFilterExpression
     {
-        public static readonly WhereExpression Build = new WhereExpression();
+        public static readonly IFilterExpression Build = new WhereExpression();
         private ExpressionReducer _reducer;
         private OperatorPrecedence _precedence;
 
