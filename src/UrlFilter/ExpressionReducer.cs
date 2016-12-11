@@ -4,9 +4,16 @@ using System.Linq.Expressions;
 
 namespace UrlFilter
 {
-    internal static class ExpressionReducer
+    internal class ExpressionReducer
     {
-        internal static Expression ReduceGroupSegments<T>(List<Token> tokens, ParameterExpression parameterExpression)
+        private ExpressionProcessors _processors;
+
+        public ExpressionReducer(ExpressionProcessors processors)
+        {
+            _processors = processors;
+        }
+
+        internal Expression ReduceGroupSegments<T>(List<Token> tokens, ParameterExpression parameterExpression)
         {
             var currentTokens = tokens;
             while (currentTokens.Count != 1)
@@ -16,7 +23,7 @@ namespace UrlFilter
             return currentTokens.Single().OperatorExpression;
         }
 
-        private static List<Token> ProcessGroupPriority<T>(List<Token> tokens, ParameterExpression parameterExpression)
+        private List<Token> ProcessGroupPriority<T>(List<Token> tokens, ParameterExpression parameterExpression)
         {
             var leftBracket = 0;
 
@@ -41,13 +48,13 @@ namespace UrlFilter
             return new List<Token> { new Token { OperatorExpression = ReduceExpressionSegments<T>(new LinkedList<Token>(tokens), parameterExpression) } };
         }
 
-        private static Expression ReduceExpressionSegments<T>(LinkedList<Token> tokens, ParameterExpression parameterExpression)
+        private Expression ReduceExpressionSegments<T>(LinkedList<Token> tokens, ParameterExpression parameterExpression)
         {
-            ExpressionProcessors.ProcessUnary(tokens, OperatorPrecedence.Precedence.Unary);
-            ExpressionProcessors.ProcessEqualityAndRelational<T>(tokens, OperatorPrecedence.Precedence.Relational, parameterExpression);
-            ExpressionProcessors.ProcessEqualityAndRelational<T>(tokens, OperatorPrecedence.Precedence.Equality, parameterExpression);
-            ExpressionProcessors.ProcessConditional(tokens, OperatorPrecedence.Precedence.ConditionalAnd);
-            ExpressionProcessors.ProcessConditional(tokens, OperatorPrecedence.Precedence.ConditionalOr);
+            _processors.ProcessUnary(tokens, OperatorPrecedence.Precedence.Unary);
+            _processors.ProcessEqualityAndRelational<T>(tokens, OperatorPrecedence.Precedence.Relational, parameterExpression);
+            _processors.ProcessEqualityAndRelational<T>(tokens, OperatorPrecedence.Precedence.Equality, parameterExpression);
+            _processors.ProcessConditional(tokens, OperatorPrecedence.Precedence.ConditionalAnd);
+            _processors.ProcessConditional(tokens, OperatorPrecedence.Precedence.ConditionalOr);
 
             return tokens.First.Value.OperatorExpression;
         }

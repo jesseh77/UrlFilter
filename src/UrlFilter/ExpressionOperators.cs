@@ -4,10 +4,10 @@ using System.Linq.Expressions;
 
 namespace UrlFilter
 {
-    internal static class ExpressionOperators
+    internal class ExpressionOperators
     {
         private static readonly Dictionary<string, Func<Expression, Expression, Expression>> Expressions = GetExpressions();
-        public static Expression OperatorExpression(string operation, Expression left, Expression right)
+        public Expression OperatorExpression(string operation, Expression left, Expression right)
         {
             var lowerOperation = operation.Trim().ToLowerInvariant();
             Func<Expression, Expression, Expression> expression;

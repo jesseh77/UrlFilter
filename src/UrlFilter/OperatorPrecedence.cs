@@ -2,11 +2,11 @@
 
 namespace UrlFilter
 {
-    internal static class OperatorPrecedence
+    internal class OperatorPrecedence
     {
         private static readonly Dictionary<string, Precedence> Precedences = GetPresedences();
 
-        public static Precedence GetOperatorPrecedence(string operation)
+        internal Precedence GetOperatorPrecedence(string operation)
         {
             var operationName = operation.Trim().ToLowerInvariant();
             Precedence precedence;
@@ -35,7 +35,7 @@ namespace UrlFilter
             };
         }
 
-        public enum Precedence
+        internal enum Precedence
         {
             Value,
             ConditionalOr,
