@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using System.Linq;
 using Xunit;
 
@@ -26,6 +27,7 @@ namespace UrlFilter.Tests
         [InlineData(10, "not value eq 3 and value lt 4", new [] {1,2})]
         [InlineData(10, "value eq 3 or value eq 5 and value gt 4", new [] {3,5})]
         [InlineData(10, "(value eq 3 or value eq 5) and value gt 4", new [] {5})]
+        [InlineData(10, "anothervalue eq 1 and (value eq 3 or value eq 4)", new[] { 4 })]
         [InlineData(10, "text eq 'Item7'", new [] {7})]
         [InlineData(10, "text eq Item7", new [] {7})]
         [InlineData(10, "text eq 'Item7' or text eq 'Item2'", new [] {2,7})]
@@ -54,7 +56,7 @@ namespace UrlFilter.Tests
         private static IQueryable<TestDocument> GetTestDocuments(int quantity)
         {
             return Enumerable.Range(1, quantity)
-                .Select(x => new TestDocument { Value = x, AnotherValue = (-1)^x*3, Text = $"Item{x}",
+                .Select(x => new TestDocument { Value = x, AnotherValue = Math.Pow(-1,x), Text = $"Item{x}",
                     SubDocument = new TestDocument { Value = x * 100, Text = $"Item{x * 100 }" } })
                     .AsQueryable();
         }

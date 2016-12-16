@@ -6,7 +6,7 @@ namespace UrlFilter
 {
     internal class ExpressionReducer
     {
-        private ExpressionProcessors _processors;
+        private readonly ExpressionProcessors _processors;
 
         public ExpressionReducer(ExpressionProcessors processors)
         {
@@ -27,7 +27,7 @@ namespace UrlFilter
         {
             var leftBracket = 0;
 
-            for (var i = 0; i < tokens.Count - 1; i++)
+            for (var i = 0; i < tokens.Count; i++)
             {
                 var token = tokens[i];
                 if (token.GroupPriority != OperatorPrecedence.Precedence.Grouping) continue;

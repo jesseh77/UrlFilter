@@ -8,8 +8,8 @@ namespace UrlFilter
     public class WhereExpression : IFilterExpression
     {
         public static readonly IFilterExpression Build = new WhereExpression();
-        private ExpressionReducer _reducer;
-        private OperatorPrecedence _precedence;
+        private readonly ExpressionReducer _reducer;
+        private readonly OperatorPrecedence _precedence;
 
         public WhereExpression()
         {
@@ -31,7 +31,7 @@ namespace UrlFilter
         private List<Token> GetWhereSegments(string queryString)
         {
             var querySegments = PadBracketsWithSpace(queryString).Split(' ');
-            var tokens = Enumerable.Where(querySegments, x => !string.IsNullOrWhiteSpace(x))
+            var tokens = querySegments.Where(x => !string.IsNullOrWhiteSpace(x))
                 .Select(x => new Token
                 {
                     GroupPriority = _precedence.GetOperatorPrecedence(x),
