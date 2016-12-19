@@ -44,14 +44,18 @@ namespace UrlFilter.Tests
             result.Select(x => x.Value).Should().BeEquivalentTo(expectedValues);
         }
 
-        //[Theory(DisplayName ="Exceptions")]
-        //public void should_throw_exception(int qty, string query)
-        //{
-        //    var testDocs = GetTestDocuments(qty);
+        [InlineData("value eq 5 or )text eq 'Item7')")]
+        [InlineData("(value eq 5")]
+        [InlineData("value eq 5)")]
+        [InlineData("((value eq 5)")]
+        [InlineData("(value eq 5))")]
+        [Theory(DisplayName ="Query text validation")]
+        public void should_throw_exception(string query)
+        {
+            Action action = () => WhereExpression.Build.FromString<TestDocument>(query);
 
-        //    var expression = WhereExpression.Build.FromString<TestDocument>(query);
-            
-        //}
+            Assert.Throws<QueryStringException>(action);
+        }
 
         private static IQueryable<TestDocument> GetTestDocuments(int quantity)
         {

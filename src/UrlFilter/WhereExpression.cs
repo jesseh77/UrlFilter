@@ -10,6 +10,7 @@ namespace UrlFilter
         public static readonly IFilterExpression Build = new WhereExpression();
         private readonly ExpressionReducer _reducer;
         private readonly OperatorPrecedence _precedence;
+        private readonly QueryValidator _validator;
 
         public WhereExpression()
         {
@@ -17,10 +18,12 @@ namespace UrlFilter
             var processors = new ExpressionProcessors(operators);
             _reducer = new ExpressionReducer(processors);
             _precedence = new OperatorPrecedence();
+            _validator = new QueryValidator();
         }
         
         public Expression<Func<T,bool>> FromString<T>(string queryString) where T : class
         {
+            _validator.ValidateQueryText(queryString);
             var tokens = GetWhereSegments(queryString);
             var parameterExpression = Expression.Parameter(typeof(T));
 
