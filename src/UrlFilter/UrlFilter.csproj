@@ -35,7 +35,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ExpressionOperators.cs" />
-    <Compile Include="ExpressionProcessors.cs" />
+    <Compile Include="ExpressionProcessors\ConditionalProcessor.cs" />
+    <Compile Include="ExpressionProcessors\CustomProcessor.cs" />
+    <Compile Include="ExpressionProcessors\EqualityAndRelationalProcessor.cs" />
+    <Compile Include="ExpressionProcessors\IExpressionProcessor.cs" />
+    <Compile Include="ExpressionProcessors\UnaryProcessor.cs" />
     <Compile Include="ExpressionReducer.cs" />
     <Compile Include="IFilterExpression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -47,6 +51,7 @@
   <ItemGroup>
     <None Include="UrlFilter.nuspec" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,4 +1,6 @@
-﻿namespace UrlFilter.Tests
+﻿using System.Collections.Generic;
+
+namespace UrlFilter.Tests
 {
     class TestDocument
     {
@@ -6,5 +8,6 @@
         public double AnotherValue { get; set; }
         public string Text { get; set; }
         public TestDocument SubDocument { get; set; }
+        public List<TestDocument> DocumentCollection { get; set; }
     }
 }

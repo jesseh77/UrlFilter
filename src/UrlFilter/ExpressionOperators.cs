@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace UrlFilter
 {
-    internal class ExpressionOperators
+    internal class ExpressionOperator
     {
         private static readonly Dictionary<string, Func<Expression, Expression, Expression>> Expressions = GetExpressions();
         public Expression OperatorExpression(string operation, Expression left, Expression right)
@@ -15,21 +15,21 @@ namespace UrlFilter
             {
                 return expression(left, right);
             }
-            throw new InvalidOperationException($"Filter of type '{operation}' is not a valid query string operator");
+            throw new QueryStringException($"Filter of type '{operation}' is not a valid query string operator");
         }
 
         private static Dictionary<string, Func<Expression, Expression, Expression>> GetExpressions()
         {
             return new Dictionary<string, Func<Expression, Expression, Expression>>
             {
-                {"eq", Expression.Equal },
-                {"ne", Expression.NotEqual },
-                {"gt", Expression.GreaterThan },
-                {"ge", Expression.GreaterThanOrEqual },
-                {"lt", Expression.LessThan },
-                {"le", Expression.LessThanOrEqual },
-                {"or", Expression.OrElse },
-                { "and", Expression.AndAlso }
+                {"eq", Expression.Equal},
+                {"ne", Expression.NotEqual},
+                {"gt", Expression.GreaterThan},
+                {"ge", Expression.GreaterThanOrEqual},
+                {"lt", Expression.LessThan},
+                {"le", Expression.LessThanOrEqual},
+                {"or", Expression.OrElse},
+                {"and", Expression.AndAlso}
             };
         }
     }

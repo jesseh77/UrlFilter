@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using System.Linq;
+using System.Linq.Expressions;
 using Xunit;
 
 namespace UrlFilter.Tests
@@ -55,6 +56,13 @@ namespace UrlFilter.Tests
             Action action = () => WhereExpression.Build.FromString<TestDocument>(query);
 
             Assert.Throws<QueryStringException>(action);
+        }
+
+        [Fact]
+        public void should_create_expression()
+        {
+            Expression<Func<TestDocument, bool>> expression = x => x.DocumentCollection.Any(y => y.Value == 7);
+
         }
 
         private static IQueryable<TestDocument> GetTestDocuments(int quantity)

@@ -9,44 +9,31 @@ namespace UrlFilter
     {
         public static readonly IFilterExpression Build = new WhereExpression();
         private readonly ExpressionReducer _reducer;
-        private readonly OperatorPrecedence _precedence;
         private readonly QueryValidator _validator;
 
         public WhereExpression()
         {
-            var operators = new ExpressionOperators();
-            var processors = new ExpressionProcessors(operators);
-            _reducer = new ExpressionReducer(processors);
-            _precedence = new OperatorPrecedence();
+            var operators = new ExpressionOperator();
+            _reducer = new ExpressionReducer(operators);
             _validator = new QueryValidator();
         }
         
         public Expression<Func<T,bool>> FromString<T>(string queryString) where T : class
         {
             _validator.ValidateQueryText(queryString);
-            var tokens = GetWhereSegments(queryString);
             var parameterExpression = Expression.Parameter(typeof(T));
 
-            var expression = _reducer.ReduceGroupSegments<T>(tokens, parameterExpression);
+            var tokens = _reducer.GetWhereSegments(queryString);
+            var expression = _reducer.ReduceGroupSegments(tokens, parameterExpression);
             return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
         }
 
-        private List<Token> GetWhereSegments(string queryString)
+        public Expression<Func<T, bool>> FromString<T>(string queryString, ParameterExpression parameterExpression, IDictionary<string, Func<string, object, Expression>> customExpressions) where T : class
         {
-            var querySegments = PadBracketsWithSpace(queryString).Split(' ');
-            var tokens = querySegments.Where(x => !string.IsNullOrWhiteSpace(x))
-                .Select(x => new Token
-                {
-                    GroupPriority = _precedence.GetOperatorPrecedence(x),
-                    TokenValue = x
-                }).ToList();
-
-            return tokens;
-        }
-
-        private static string PadBracketsWithSpace(string queryString)
-        {
-            return queryString.Replace("(", " ( ").Replace(")", " ) ");
+            _validator.ValidateQueryText(queryString);
+            var tokens = _reducer.GetWhereSegments(queryString, customExpressions.Keys);
+            var expression = _reducer.ReduceGroupSegments(tokens, parameterExpression);
+            return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
         }
     }
 }

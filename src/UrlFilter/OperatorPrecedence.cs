@@ -6,13 +6,18 @@ namespace UrlFilter
     {
         private static readonly Dictionary<string, Precedence> Precedences = GetPresedences();
 
-        internal Precedence GetOperatorPrecedence(string operation)
+        internal Precedence GetOperatorPrecedence(string operation, ICollection<string> customOperators = null )
         {
             var operationName = operation.Trim().ToLowerInvariant();
             Precedence precedence;
             if (Precedences.TryGetValue(operationName, out precedence))
             {
                 return precedence;
+            }
+
+            if (customOperators != null && customOperators.Contains(operationName))
+            {
+                return Precedence.Custom;
             }
             return Precedence.Value;
         }
@@ -40,6 +45,7 @@ namespace UrlFilter
             Value,
             ConditionalOr,
             ConditionalAnd,
+            Custom,
             Equality,
             Relational,
             Unary,
