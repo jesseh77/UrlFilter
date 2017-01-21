@@ -28,6 +28,20 @@ namespace UrlFilter
             return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
         }
 
+        public Expression<Func<T, bool>> FromString<T>(string queryString, Expression<Func<T, bool>> expression) where T : class
+        {
+            _validator.ValidateQueryText(queryString);
+            var parameterExpression = expression.Parameters.First();
+
+            var left = expression.Body;
+
+            var tokens = _reducer.GetWhereSegments(queryString);
+            var right = _reducer.ReduceGroupSegments(tokens, parameterExpression);
+
+            var netExpression = Expression.And(left, right);
+            return Expression.Lambda<Func<T, bool>>(netExpression, parameterExpression);
+        }
+
         public Expression<Func<T, bool>> FromString<T>(string queryString, ParameterExpression parameterExpression, IDictionary<string, Func<string, object, Expression>> customExpressions) where T : class
         {
             _validator.ValidateQueryText(queryString);
