@@ -21,7 +21,7 @@ namespace DemoApi.Tests
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             result.FilterText.Should().Be(null);
-            result.People.Count.Should().Be(200);
+            result.People.Count.Should().Be(100);
         }
 
         private BrowserResponse Get(string filter = null)

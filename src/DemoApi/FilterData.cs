@@ -11,7 +11,7 @@ namespace DemoApi
     public class FilterData : NancyModule
     {
         private readonly IQueryable<Person> _demoData;
-        private const int DefaultQuantity = 200;
+        private const int DefaultQuantity = 100;
         public FilterData()
         {
             _demoData = GetDemoData(DefaultQuantity);
