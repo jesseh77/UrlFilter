@@ -61,7 +61,7 @@ namespace UrlFilter.Tests
         [Fact]
         public void should_create_expression_from_existing_expression()
         {
-            Expression<Func<TestDocument, bool>> expression = x => x.DocumentCollection.Any(y => y.Value > 3);
+            Expression<Func<TestDocument, bool>> expression = x => x.Value > 3;
             var filter = "value lt 7";
             var testDocs = GetTestDocuments(10);
             var expected = new[] {4, 5, 6};
