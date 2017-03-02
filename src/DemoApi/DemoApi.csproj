@@ -98,6 +98,7 @@
   <ItemGroup>
     <Compile Include="DemoItem.cs" />
     <Compile Include="FilterData.cs" />
+    <Compile Include="FilterResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

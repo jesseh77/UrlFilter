@@ -15,19 +15,42 @@ namespace DemoApi
         public FilterData()
         {
             _demoData = GetDemoData(DefaultQuantity);
-            Get["/FilterData"] = x => FilterTheData();
+            Get["/filterData"] = x => FilterTheData();
         }
 
-        private List<Person> FilterTheData()
+        private FilterResponse FilterTheData()
         {
-            var expression = GetFilterExpression();
-            return _demoData.Where(expression).ToList();
+            var filterText = GetFilterText();
+            var expression = GetFilterExpression(filterText);
+            if (expression == null)
+            {
+                var response = new FilterResponse
+                {
+                    People = _demoData.ToList(),
+                    FilterText = "",
+                    LinqExpression = ""
+                };
+                return response;
+            }
+
+            var filteredResponse = new FilterResponse
+            {
+                People = _demoData.Where(expression).ToList(),
+                FilterText = filterText,
+                LinqExpression = expression.ToString()
+            };
+            return filteredResponse;
         }
 
-        private Expression<Func<Person, bool>> GetFilterExpression()
+        private string GetFilterText()
         {
-            var filter = (string)Request.Query["$filter"];
-            if (filter == null) return null;
+            var filter = Request.Query["$filter"] as string;
+            return filter ?? string.Empty;
+        }
+
+        private Expression<Func<Person, bool>> GetFilterExpression(string filter)
+        {
+            if (string.IsNullOrEmpty(filter)) return null;
             var expression = UrlFilter.WhereExpression.Build.FromString<Person>(filter);
             return expression;
         }
