@@ -4,73 +4,32 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace UrlFilter
+namespace UrlFilter.ExpressionProcessors
 {
-    internal class ExpressionProcessors
+    class EqualityAndRelationalProcessor : IExpressionProcessor
     {
-        private ExpressionOperators _operators;
+        private readonly ExpressionOperator _operators;
 
-        public ExpressionProcessors(ExpressionOperators operators)
+        public EqualityAndRelationalProcessor(OperatorPrecedence.Precedence precedence, ExpressionOperator operators)
         {
             _operators = operators;
+            Precedence = precedence;
         }
+        public OperatorPrecedence.Precedence Precedence { get; }
 
-        internal void ProcessConditional(LinkedList<Token> tokens, OperatorPrecedence.Precedence operation)
+        public void Process(LinkedList<Token> tokens, ParameterExpression paramExpression)
         {
             var current = tokens.First;
             while (current.Next != null)
             {
-                if (current.Next.Value.GroupPriority == operation)
-                {
-                    current.Next.Value.OperatorExpression =
-                        _operators.OperatorExpression(current.Next.Value.TokenValue,
-                            current.Value.OperatorExpression, current.Next.Next.Value.OperatorExpression);
-
-                    tokens.Remove(current.Next.Next);
-                    var next = current.Next;
-                    tokens.Remove(current);
-                    current = next;
-                }
-                else
-                {
-                    current = current.Next;
-                }
-
-            }
-        }
-
-        internal void ProcessUnary(LinkedList<Token> tokens, OperatorPrecedence.Precedence operation)
-        {
-            var current = tokens.First;
-            while (current.Next != null)
-            {
-                if (current.Value.GroupPriority == operation)
-                {
-                    current.Next.Next.Value.IsNot = true;
-                    var next = current.Next;
-                    tokens.Remove(current);
-                    current = next;
-                }
-                else
-                {
-                    current = current.Next;
-                }
-            }
-        }
-
-        internal void ProcessEqualityAndRelational<T>(LinkedList<Token> tokens, OperatorPrecedence.Precedence operation, ParameterExpression paramExpression)
-        {
-            var current = tokens.First;
-            while (current.Next != null)
-            {
-                if (current.Next.Value.GroupPriority == operation)
+                if (current.Next.Value.GroupPriority == Precedence)
                 {
                     var propertyName = current.Value.TokenValue;
-                                        
+
                     Expression parameterExpression = paramExpression;
                     Expression returnExpression = null;
                     PropertyInfo propertyInfo = null;
-                    var propertyType = typeof(T);
+                    var propertyType = parameterExpression.Type;
 
                     var propertySegments = propertyName.Split('.');
                     var segmentCount = propertySegments.Count();
@@ -91,7 +50,7 @@ namespace UrlFilter
                     }
 
                     var expressionValue = StripOuterSingleQuotes(current.Next.Next.Value.TokenValue);
-                    
+
                     var propValue = Convert.ChangeType(expressionValue, propertyInfo.PropertyType);
                     var rightExpression = Expression.Constant(propValue);
 
