@@ -100,9 +100,11 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DemoItem.cs" />
+    <Compile Include="Address.cs" />
+    <Compile Include="DemoData.cs" />
     <Compile Include="FilterData.cs" />
     <Compile Include="FilterResponse.cs" />
+    <Compile Include="DemoPerson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

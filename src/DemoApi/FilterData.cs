@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Web;
-using Bogus;
 using Nancy;
 
 namespace DemoApi
 {
     public class FilterData : NancyModule
     {
-        private readonly IQueryable<Person> _demoData;
+        private readonly IQueryable<DemoPerson> _demoData;
         private const int DefaultQuantity = 100;
         public FilterData()
         {
-            _demoData = GetDemoData(DefaultQuantity);
+            _demoData = DemoData.GetDemoData(DefaultQuantity);
             Get["/filterData"] = x => FilterTheData();
         }
 
@@ -44,20 +41,15 @@ namespace DemoApi
 
         private string GetFilterText()
         {
-            var filter = Request.Query["$filter"] as string;
+            var filter = Request.Query["$filter"];
             return filter ?? string.Empty;
         }
 
-        private Expression<Func<Person, bool>> GetFilterExpression(string filter)
+        private Expression<Func<DemoPerson, bool>> GetFilterExpression(string filter)
         {
             if (string.IsNullOrEmpty(filter)) return null;
-            var expression = UrlFilter.WhereExpression.Build.FromString<Person>(filter);
+            var expression = UrlFilter.WhereExpression.Build.FromString<DemoPerson>(filter);
             return expression;
-        }
-
-        private static IQueryable<Person> GetDemoData(int quantity)
-        {
-            return Enumerable.Range(1, quantity).Select(x => new Person()).AsQueryable();
-        }
+        }        
     }
 }
