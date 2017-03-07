@@ -91,8 +91,26 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="content\css\bootstrap-theme.css" />
+    <Content Include="content\css\bootstrap-theme.min.css" />
+    <Content Include="content\css\bootstrap.css" />
+    <Content Include="content\css\bootstrap.min.css" />
+    <Content Include="content\index.html" />
+    <Content Include="content\js\bootstrap.js" />
+    <Content Include="content\js\bootstrap.min.js" />
+    <None Include="content\js\jquery-3.1.1.intellisense.js" />
+    <Content Include="content\js\jquery-3.1.1.js" />
+    <Content Include="content\js\jquery-3.1.1.min.js" />
+    <Content Include="content\js\jquery-3.1.1.slim.js" />
+    <Content Include="content\js\jquery-3.1.1.slim.min.js" />
     <Content Include="packages.config" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
+    <Content Include="content\css\bootstrap-theme.css.map" />
+    <Content Include="content\css\bootstrap-theme.min.css.map" />
+    <Content Include="content\css\bootstrap.css.map" />
+    <Content Include="content\css\bootstrap.min.css.map" />
+    <Content Include="content\js\jquery-3.1.1.min.map" />
+    <Content Include="content\js\jquery-3.1.1.slim.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -105,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Address.cs" />
+    <Compile Include="Bootstrapper.cs" />
     <Compile Include="DemoData.cs" />
     <Compile Include="FilterData.cs" />
     <Compile Include="FilterResponse.cs" />

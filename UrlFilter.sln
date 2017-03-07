@@ -1,37 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrlFilter.Tests", "tests\UrlFilter.Tests\UrlFilter.Tests.csproj", "{33684405-DF3B-4FEA-8AB6-43DF8D761A7F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrlFilter", "src\UrlFilter\UrlFilter.csproj", "{B40429D0-DBD5-4690-82F0-1CBD9EC585CB}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DemoSite", "src\DemoSite\", "{7AF004E3-B06D-4491-9169-73EC7E4291F3}"
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5.2"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_55942"
-		Debug.AspNetCompiler.PhysicalPath = "src\DemoSite\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_55942\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_55942"
-		Release.AspNetCompiler.PhysicalPath = "src\DemoSite\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_55942\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "55942"
-		SlnRelativePath = "src\DemoSite\"
-		DefaultWebSiteLanguage = "Visual C#"
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "src\Demo\Demo.csproj", "{D1E0E9A6-B1DB-431F-83C8-CF25CC779B7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApi", "src\DemoApi\DemoApi.csproj", "{D1E0E9A6-B1DB-431F-83C8-CF25CC779B7E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApi.Tests", "DemoApi.Tests\DemoApi.Tests.csproj", "{61A7DA37-2FDE-4DA1-820C-059B5D84E676}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.Tests", "tests\Demo.Tests\Demo.Tests.csproj", "{61A7DA37-2FDE-4DA1-820C-059B5D84E676}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +25,6 @@ Global
 		{B40429D0-DBD5-4690-82F0-1CBD9EC585CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B40429D0-DBD5-4690-82F0-1CBD9EC585CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B40429D0-DBD5-4690-82F0-1CBD9EC585CB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7AF004E3-B06D-4491-9169-73EC7E4291F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7AF004E3-B06D-4491-9169-73EC7E4291F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7AF004E3-B06D-4491-9169-73EC7E4291F3}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{7AF004E3-B06D-4491-9169-73EC7E4291F3}.Release|Any CPU.Build.0 = Debug|Any CPU
 		{D1E0E9A6-B1DB-431F-83C8-CF25CC779B7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D1E0E9A6-B1DB-431F-83C8-CF25CC779B7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1E0E9A6-B1DB-431F-83C8-CF25CC779B7E}.Release|Any CPU.ActiveCfg = Release|Any CPU

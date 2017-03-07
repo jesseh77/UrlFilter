@@ -96,13 +96,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\DemoApi\DemoApi.csproj">
-      <Project>{D1E0E9A6-B1DB-431F-83C8-CF25CC779B7E}</Project>
-      <Name>DemoApi</Name>
-    </ProjectReference>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <ProjectReference Include="..\..\src\Demo\Demo.csproj">
+      <Project>{d1e0e9a6-b1db-431f-83c8-cf25cc779b7e}</Project>
+      <Name>Demo</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
