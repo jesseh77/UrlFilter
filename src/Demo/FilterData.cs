@@ -13,6 +13,7 @@ namespace DemoApi
         {
             _demoData = DemoData.GetDemoData(DefaultQuantity);
             Get["/filterData"] = x => FilterTheData();
+            Get["/"] = x => Response.AsFile("Content/index.html", "text/html");
         }
 
         private FilterResponse FilterTheData()
