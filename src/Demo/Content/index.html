@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Url Filter demo site</title>
+    
+    <link href="/Content/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Url Filter demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Example row of columns -->
+        <div class="row">
+            <div class="col-md-4">
+                <h2>Url Filter</h2>
+                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+            </div>
+            <div class="col-md-5">
+                <h2>Operators</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operator</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>eq</td>
+                            <td>Equal</td>
+                            <td>firstname eq 'Bruce'</td>
+                        </tr>
+                        <tr>
+                            <td>ne</td>
+                            <td>Not equal</td>
+                            <td>country ne 'Atlantis'</td>
+                        </tr>
+                        <tr>
+                            <td>gt</td>
+                            <td>Greater than</td>
+                            <td>weight gt 200</td>
+                        </tr>
+                        <tr>
+                            <td>ge</td>
+                            <td>Greater than or equal</td>
+                            <td>height ge 75</td>
+                        </tr>
+                        <tr>
+                            <td>lt</td>
+                            <td>Less than</td>
+                            <td>quantity lt 20</td>
+                        </tr>
+                        <tr>
+                            <td>le</td>
+                            <td>Less than or equal</td>
+                            <td>price le 9.99</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>and</td>
+                            <td>Logical and</td>
+                            <td>price le 75 and cost gt 40</td>
+                        </tr>
+                        <tr>
+                            <td>or</td>
+                            <td>Logical or</td>
+                            <td>superpower eq 'speed' or superpower eq 'strength'</td>
+                        </tr>
+                        <tr>
+                            <td>not</td>
+                            <td>Logical negation</td>
+                            <td>not secretidentity eq 'Oliver Queen'</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>( )</td>
+                            <td>Precedence grouping</td>
+                            <td>(priority eq 1 or city eq 'Metropolis') and price gt 100</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-3">
+                <h2>Model</h2>
+                <div>{</div>
+                <div>"id": 14,</div>
+                <div>"firstName": "Annabelle",</div>
+                <div>"lastName": "Torp",</div>
+                <div>"height": 180,</div>
+                <div>"hairColor": "orange",</div>
+                <div>"eyeColor": "green",</div>
+                <div>"team": 7,</div>
+                <div>"address":</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;{</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;"Unit": 1,</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;"Address1": "413 Jaskolski Isle",</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;"City": "Kleinhaven"</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+                <div>}</div>
+            </div>
+        </div>
+
+        <hr>
+
+        <footer>
+            <p>&copy; 2016 Company, Inc.</p>
+        </footer>
+    </div>
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+</html>

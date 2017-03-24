@@ -5,7 +5,7 @@ namespace UrlFilter.ExpressionProcessors
 {
     internal interface IExpressionProcessor
     {
-        OperatorPrecedence.Precedence Precedence { get; }
+        bool canProcess(string operand);
         void Process(LinkedList<Token> tokens, ParameterExpression paramExpression);
     }
 }

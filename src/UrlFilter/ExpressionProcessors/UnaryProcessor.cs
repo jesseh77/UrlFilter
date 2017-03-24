@@ -1,17 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace UrlFilter.ExpressionProcessors
 {
     internal class UnaryProcessor : IExpressionProcessor
     {
-        public OperatorPrecedence.Precedence Precedence => OperatorPrecedence.Precedence.Unary;
+        private readonly List<string> _operands;
+        public bool canProcess(string operand)
+        {
+            if (string.IsNullOrWhiteSpace(operand)) return false;
+            return _operands.Contains(operand.ToLower());
+        }
+
+        public UnaryProcessor(List<string> operands)
+        {
+            _operands = operands;
+        }
+
         public void Process(LinkedList<Token> tokens, ParameterExpression paramExpression)
         {
             var current = tokens.First;
             while (current.Next != null)
             {
-                if (current.Value.GroupPriority == Precedence)
+                if (canProcess(current.Value.TokenValue))
                 {
                     current.Next.Next.Value.IsNot = true;
                     var next = current.Next;

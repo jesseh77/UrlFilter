@@ -8,7 +8,7 @@
     <owners>$author$</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>$releaseNotes</releaseNotes>
+    <releaseNotes></releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>linq expression url filter</tags>
   </metadata>

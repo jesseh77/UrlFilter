@@ -6,23 +6,29 @@ using System.Reflection;
 
 namespace UrlFilter.ExpressionProcessors
 {
-    class EqualityAndRelationalProcessor : IExpressionProcessor
+    class ValueProcessor : IExpressionProcessor
     {
         private readonly ExpressionOperator _operators;
+        private readonly List<string> _operands;
 
-        public EqualityAndRelationalProcessor(OperatorPrecedence.Precedence precedence, ExpressionOperator operators)
+        public ValueProcessor(List<string> operands, ExpressionOperator operators)
         {
+            _operands = operands;
             _operators = operators;
-            Precedence = precedence;
         }
-        public OperatorPrecedence.Precedence Precedence { get; }
+
+        public bool canProcess(string operand)
+        {
+            if (string.IsNullOrWhiteSpace(operand)) return false;
+            return _operands.Contains(operand.ToLower());
+        }
 
         public void Process(LinkedList<Token> tokens, ParameterExpression paramExpression)
         {
             var current = tokens.First;
             while (current.Next != null)
             {
-                if (current.Next.Value.GroupPriority == Precedence)
+                if (canProcess(current.Next.Value.TokenValue))
                 {
                     var propertyName = current.Value.TokenValue;
 

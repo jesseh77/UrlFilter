@@ -36,7 +36,6 @@
   <ItemGroup>
     <Compile Include="ExpressionOperators.cs" />
     <Compile Include="ExpressionProcessors\ConditionalProcessor.cs" />
-    <Compile Include="ExpressionProcessors\CustomProcessor.cs" />
     <Compile Include="ExpressionProcessors\EqualityAndRelationalProcessor.cs" />
     <Compile Include="ExpressionProcessors\IExpressionProcessor.cs" />
     <Compile Include="ExpressionProcessors\UnaryProcessor.cs" />
