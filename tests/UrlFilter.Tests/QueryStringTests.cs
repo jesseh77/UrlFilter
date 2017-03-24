@@ -34,7 +34,6 @@ namespace UrlFilter.Tests
         [InlineData(10, "text eq 'Item7' or text eq 'Item2'", new [] {2,7})]
         [InlineData(10, "value gt 6 and value le 9 or text eq 'Item2'", new [] {2,7,8,9})]
         [InlineData(10, "text eq 'Item7' and value gt 5", new [] {7})]
-        //[InlineData(10, "value gt anothervalue", new[] { 2, 4, 6, 8, 10 })]
         public void should_return_match_count(int qty, string query, int[] expectedValues)
         {
             var testDocs = GetTestDocuments(qty);

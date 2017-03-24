@@ -22,11 +22,11 @@ namespace UrlFilter
         {
             return new IExpressionProcessor[]
             {
-                new UnaryProcessor(),
-                new EqualityAndRelationalProcessor(OperatorPrecedence.Precedence.Relational, _operators),
-                new EqualityAndRelationalProcessor(OperatorPrecedence.Precedence.Equality, _operators),
-                new ConditionalProcessor(OperatorPrecedence.Precedence.ConditionalAnd, _operators),
-                new ConditionalProcessor(OperatorPrecedence.Precedence.ConditionalOr, _operators)
+                new UnaryProcessor(new List<string>{"not"}),
+                new ValueProcessor(new List<string>{"gt", "ge", "lt", "le"}, _operators),
+                new ValueProcessor(new List<string>{"eq", "ne"}, _operators),
+                new ExpressionProcessor(new List<string>{"and"}, _operators),
+                new ExpressionProcessor(new List<string>{"or"}, _operators)
             };
         }
 
@@ -47,8 +47,7 @@ namespace UrlFilter
             for (var i = 0; i < tokens.Count; i++)
             {
                 var token = tokens[i];
-                if (token.GroupPriority != OperatorPrecedence.Precedence.Grouping) continue;
-
+                
                 if (token.TokenValue == "(")
                 {
                     leftBracket = i;
@@ -76,20 +75,19 @@ namespace UrlFilter
 
         internal List<Token> GetWhereSegments(string queryString, ICollection<string> customOperators = null)
         {
-            var querySegments = PadBracketsWithSpace(queryString).Split(' ');
-            var tokens = querySegments.Where(x => !string.IsNullOrWhiteSpace(x))
-                .Select(x => new Token
-                {
-                    GroupPriority = _precedence.GetOperatorPrecedence(x, customOperators),
-                    TokenValue = x
-                }).ToList();
-
+            var querySegments = SplitSegments(queryString);
+            var tokens = querySegments.Select(x => new Token { TokenValue = x }).ToList();
             return tokens;
         }
 
-        private static string PadBracketsWithSpace(string queryString)
+        private static string[] SplitSegments(string queryString)
         {
-            return queryString.Replace("(", " ( ").Replace(")", " ) ");
+            return queryString
+                .Replace("(", " ( ")
+                .Replace(")", " ) ")
+                .Split(' ')
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .ToArray();
         }
     }
 }

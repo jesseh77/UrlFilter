@@ -3,15 +3,22 @@ using System.Linq.Expressions;
 
 namespace UrlFilter.ExpressionProcessors
 {
-    internal class ConditionalProcessor : IExpressionProcessor
+    internal class ExpressionProcessor : IExpressionProcessor
     {
         private readonly ExpressionOperator _operators;
+        private List<string> _operands;
 
-        public OperatorPrecedence.Precedence Precedence { get; }
+        public static string Precedence => "Conditional";
 
-        public ConditionalProcessor(OperatorPrecedence.Precedence precedence, ExpressionOperator operators)
+        public bool canProcess(string operand)
         {
-            Precedence = precedence;
+            if (string.IsNullOrWhiteSpace(operand)) return false;
+            return _operands.Contains(operand.ToLower());
+        }
+
+        public ExpressionProcessor(List<string> operands, ExpressionOperator operators)
+        {
+            _operands = operands;
             _operators = operators;
         }
         public void Process(LinkedList<Token> tokens, ParameterExpression paramExpression)
@@ -19,7 +26,7 @@ namespace UrlFilter.ExpressionProcessors
             var current = tokens.First;
             while (current.Next != null)
             {
-                if (current.Next.Value.GroupPriority == Precedence)
+                if (canProcess(current.Next.Value.TokenValue))
                 {
                     current.Next.Value.OperatorExpression =
                         _operators.OperatorExpression(current.Next.Value.TokenValue,
