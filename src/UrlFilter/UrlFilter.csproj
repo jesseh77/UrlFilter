@@ -34,12 +34,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ExpressionProcessor.cs" />
     <Compile Include="ExpressionOperators.cs" />
-    <Compile Include="ExpressionProcessors\ConditionalProcessor.cs" />
-    <Compile Include="ExpressionProcessors\EqualityAndRelationalProcessor.cs" />
-    <Compile Include="ExpressionProcessors\IExpressionProcessor.cs" />
-    <Compile Include="ExpressionProcessors\UnaryProcessor.cs" />
+    <Compile Include="ExpressionTypes\Constant.cs" />
+    <Compile Include="ExpressionTypes\Logical.cs" />
+    <Compile Include="ExpressionTypes\Property.cs" />
+    <Compile Include="ExpressionTypes\Unary.cs" />
+    <Compile Include="ExpressionTypes\Value.cs" />
     <Compile Include="ExpressionReducer.cs" />
+    <Compile Include="IExpressionProcessor.cs" />
     <Compile Include="IFilterExpression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryValidator.cs" />

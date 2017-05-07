@@ -23,8 +23,7 @@ namespace UrlFilter
             _validator.ValidateQueryText(queryString);
             var parameterExpression = Expression.Parameter(typeof(T));
 
-            var tokens = _reducer.GetWhereSegments(queryString);
-            var expression = _reducer.ReduceGroupSegments(tokens, parameterExpression);
+            var expression = _reducer.ProcessQueryText<T>(queryString, parameterExpression);
             return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
         }
 
@@ -45,8 +44,7 @@ namespace UrlFilter
         public Expression<Func<T, bool>> FromString<T>(string queryString, ParameterExpression parameterExpression, IDictionary<string, Func<string, object, Expression>> customExpressions) where T : class
         {
             _validator.ValidateQueryText(queryString);
-            var tokens = _reducer.GetWhereSegments(queryString, customExpressions.Keys);
-            var expression = _reducer.ReduceGroupSegments(tokens, parameterExpression);
+            var expression = _reducer.ProcessQueryText<T>(queryString, parameterExpression, customExpressions);
             return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
         }
     }

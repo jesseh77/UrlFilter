@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using UrlFilter.ExpressionProcessors;
@@ -18,9 +19,9 @@ namespace UrlFilter
             _precedence = new OperatorPrecedence();
         }
 
-        private IExpressionProcessor[] GetExpressionProcessors()
+        private List<IExpressionProcessor> IExpressionProcessor GetExpressionProcessors()
         {
-            return new IExpressionProcessor[]
+            return new List<IExpressionProcessor>
             {
                 new UnaryProcessor(new List<string>{"not"}),
                 new ValueProcessor(new List<string>{"gt", "ge", "lt", "le"}, _operators),
@@ -29,6 +30,8 @@ namespace UrlFilter
                 new ExpressionProcessor(new List<string>{"or"}, _operators)
             };
         }
+
+
 
         internal Expression ReduceGroupSegments(List<Token> tokens, ParameterExpression parameterExpression)
         {
@@ -64,30 +67,32 @@ namespace UrlFilter
             return new List<Token> { new Token { OperatorExpression = ReduceExpressionSegments(new LinkedList<Token>(tokens), parameterExpression) } };
         }
 
-        private Expression ReduceExpressionSegments(LinkedList<Token> tokens, ParameterExpression parameterExpression)
+        internal Expression ProcessQueryText<T>(string queryString, ParameterExpression parameterExpression)
         {
-            foreach (var expressionProcessor in _processors)
-            {
-                expressionProcessor.Process(tokens, parameterExpression);
-            }
-            return tokens.First.Value.OperatorExpression;
+            return ProcessQueryText<T>(queryString, parameterExpression, new Dictionary<string, Func<string, object, Expression>>());
         }
 
-        internal List<Token> GetWhereSegments(string queryString, ICollection<string> customOperators = null)
+        internal Expression ProcessQueryText<T>(string queryString, ParameterExpression parameterExpression, IDictionary<string, Func<string, object, Expression>> customExpressions)
         {
-            var querySegments = SplitSegments(queryString);
-            var tokens = querySegments.Select(x => new Token { TokenValue = x }).ToList();
-            return tokens;
+            var expresionProcessors = GetExpressionProcessors();
+            var segments = SplitQueryTextSegments(queryString);
+            var tokens = MapSegmentsToTokens(segments, customExpressions);
+            
         }
 
-        private static string[] SplitSegments(string queryString)
+        private List<Token> MapSegmentsToTokens(List<string> segments)
+        {
+
+        }
+
+        private static List<string> SplitQueryTextSegments(string queryString)
         {
             return queryString
                 .Replace("(", " ( ")
                 .Replace(")", " ) ")
                 .Split(' ')
                 .Where(x => !string.IsNullOrWhiteSpace(x))
-                .ToArray();
+                .ToList();
         }
     }
 }

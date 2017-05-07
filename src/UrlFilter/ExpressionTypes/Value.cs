@@ -23,6 +23,14 @@ namespace UrlFilter.ExpressionProcessors
             return _operands.Contains(operand.ToLower());
         }
 
+        public Expression Process(ParameterExpression paramExpression, Expression left, string operation, Expression right = null)
+        {
+            if(canProcess(operation))
+            {
+
+            }
+        }
+
         public void Process(LinkedList<Token> tokens, ParameterExpression paramExpression)
         {
             var current = tokens.First;
@@ -106,5 +114,7 @@ namespace UrlFilter.ExpressionProcessors
             }
             return value;
         }
+
+        
     }
 }
