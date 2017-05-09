@@ -6,9 +6,9 @@ namespace UrlFilter
     internal class ExpressionProcessor
     {
         private readonly ExpressionOperator _operators;
-        private List<string> _operands;
+        private readonly List<string> _operands;
 
-        public bool canProcess(string operand)
+        public bool CanProcess(string operand)
         {
             if (string.IsNullOrWhiteSpace(operand)) return false;
             return _operands.Contains(operand.ToLower());
@@ -21,7 +21,7 @@ namespace UrlFilter
         }
         public Expression Process(ParameterExpression paramExpression, Expression left, string operation, Expression right)
         {
-            if(canProcess(operation))
+            if(CanProcess(operation))
             {
                 return _operators.OperatorExpression(operation, left, right);
             }
