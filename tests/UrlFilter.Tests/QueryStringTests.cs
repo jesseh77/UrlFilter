@@ -57,19 +57,19 @@ namespace UrlFilter.Tests
             Assert.Throws<QueryStringException>(action);
         }
 
-        [Fact]
-        public void should_create_expression_from_existing_expression()
-        {
-            Expression<Func<TestDocument, bool>> expression = x => x.Value > 3;
-            var filter = "value lt 7";
-            var testDocs = GetTestDocuments(10);
-            var expected = new[] {4, 5, 6};
+        //[Fact]
+        //public void should_create_expression_from_existing_expression()
+        //{
+        //    Expression<Func<TestDocument, bool>> expression = x => x.Value > 3;
+        //    var filter = "value lt 7";
+        //    var testDocs = GetTestDocuments(10);
+        //    var expected = new[] {4, 5, 6};
 
-            var resultExpression = WhereExpression.Build.FromString(filter, expression);
-            var result = testDocs.Where(resultExpression).ToList();
+        //    var resultExpression = WhereExpression.Build.FromString(filter, expression);
+        //    var result = testDocs.Where(resultExpression).ToList();
 
-            result.Select(x => x.Value).Should().BeEquivalentTo(expected);
-        }
+        //    result.Select(x => x.Value).Should().BeEquivalentTo(expected);
+        //}
 
         private static IQueryable<TestDocument> GetTestDocuments(int quantity)
         {

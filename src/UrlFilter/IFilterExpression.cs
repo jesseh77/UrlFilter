@@ -7,7 +7,7 @@ namespace UrlFilter
     {
         Expression<Func<T, bool>> FromString<T>(string queryString) where T : class;
 
-        Expression<Func<T, bool>> FromString<T>(string queryString, Expression<Func<T, bool>> expression)
-            where T : class;
+        //Expression<Func<T, bool>> FromString<T>(string queryString, Expression<Func<T, bool>> expression)
+        //    where T : class;
     }
 }
