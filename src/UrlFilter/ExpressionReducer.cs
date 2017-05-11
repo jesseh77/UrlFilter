@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using UrlFilter.ExpressionProcessors;
+using UrlFilter.ExpressionTypes;
 
 namespace UrlFilter
 {
@@ -25,9 +26,9 @@ namespace UrlFilter
             {
                 new UnaryProcessor(new List<string>{"not"}),
                 new ValueProcessor(new List<string>{"gt", "ge", "lt", "le"}, _operators),
-                new ValueProcessor(new List<string>{"eq", "ne"}, _operators)
-                //new ExpressionProcessor(new List<string>{"and"}, _operators),
-                //new ExpressionProcessor(new List<string>{"or"}, _operators)
+                new ValueProcessor(new List<string>{"eq", "ne"}, _operators),
+                new LogicalProcessor(new List<string>{"and"}, _operators),
+                new LogicalProcessor(new List<string>{"or"}, _operators)
             };
         }
 

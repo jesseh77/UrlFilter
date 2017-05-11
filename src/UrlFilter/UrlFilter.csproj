@@ -36,12 +36,10 @@
   <ItemGroup>
     <Compile Include="ExpressionProcessor.cs" />
     <Compile Include="ExpressionOperator.cs" />
-    <Compile Include="ExpressionTypes\Constant.cs" />
-    <Compile Include="ExpressionTypes\Logical.cs" />
-    <Compile Include="ExpressionTypes\Property.cs" />
-    <Compile Include="ExpressionTypes\Unary.cs" />
-    <Compile Include="ExpressionTypes\Value.cs" />
+    <Compile Include="ExpressionTypes\LogicalProcessor.cs" />
+    <Compile Include="ExpressionTypes\UnaryProcessor.cs" />
     <Compile Include="ExpressionReducer.cs" />
+    <Compile Include="ExpressionTypes\ValueProcessor.cs" />
     <Compile Include="IExpressionProcessor.cs" />
     <Compile Include="IFilterExpression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
