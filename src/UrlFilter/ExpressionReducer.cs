@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using UrlFilter.ExpressionProcessors;
+using UrlFilter.ExpressionTypes;
 
 namespace UrlFilter
 {
     internal class ExpressionReducer
     {
         private readonly ExpressionOperator _operators;
-        private readonly IExpressionProcessor[] _processors;
+        private readonly List<IExpressionProcessor> _processors;
         private readonly OperatorPrecedence _precedence;
 
         public ExpressionReducer(ExpressionOperator operators)
@@ -18,15 +20,15 @@ namespace UrlFilter
             _precedence = new OperatorPrecedence();
         }
 
-        private IExpressionProcessor[] GetExpressionProcessors()
+        private List<IExpressionProcessor> GetExpressionProcessors()
         {
-            return new IExpressionProcessor[]
+            return new List<IExpressionProcessor>
             {
                 new UnaryProcessor(new List<string>{"not"}),
                 new ValueProcessor(new List<string>{"gt", "ge", "lt", "le"}, _operators),
                 new ValueProcessor(new List<string>{"eq", "ne"}, _operators),
-                new ExpressionProcessor(new List<string>{"and"}, _operators),
-                new ExpressionProcessor(new List<string>{"or"}, _operators)
+                new LogicalProcessor(new List<string>{"and"}, _operators),
+                new LogicalProcessor(new List<string>{"or"}, _operators)
             };
         }
 
@@ -64,30 +66,36 @@ namespace UrlFilter
             return new List<Token> { new Token { OperatorExpression = ReduceExpressionSegments(new LinkedList<Token>(tokens), parameterExpression) } };
         }
 
-        private Expression ReduceExpressionSegments(LinkedList<Token> tokens, ParameterExpression parameterExpression)
+        private Expression ReduceExpressionSegments(LinkedList<Token> linkedList, ParameterExpression parameterExpression)
         {
-            foreach (var expressionProcessor in _processors)
+            foreach (var processor in _processors)
             {
-                expressionProcessor.Process(tokens, parameterExpression);
+                processor.Process(linkedList, parameterExpression);
             }
-            return tokens.First.Value.OperatorExpression;
+
+            return linkedList.First.Value.OperatorExpression;
         }
 
-        internal List<Token> GetWhereSegments(string queryString, ICollection<string> customOperators = null)
+        internal Expression ProcessQueryText<T>(string queryString, ParameterExpression parameterExpression)
         {
-            var querySegments = SplitSegments(queryString);
-            var tokens = querySegments.Select(x => new Token { TokenValue = x }).ToList();
-            return tokens;
+            var segments = SplitQueryTextSegments(queryString);
+            var tokens = MapSegmentsToTokens(segments);
+            return ReduceGroupSegments(tokens, parameterExpression);
         }
 
-        private static string[] SplitSegments(string queryString)
+        private List<Token> MapSegmentsToTokens(List<string> segments)
+        {
+            return segments.Select(x => new Token(x)).ToList();
+        }
+
+        private static List<string> SplitQueryTextSegments(string queryString)
         {
             return queryString
                 .Replace("(", " ( ")
                 .Replace(")", " ) ")
                 .Split(' ')
                 .Where(x => !string.IsNullOrWhiteSpace(x))
-                .ToArray();
+                .ToList();
         }
     }
 }

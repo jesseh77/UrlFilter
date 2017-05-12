@@ -23,8 +23,7 @@ namespace UrlFilter
             _validator.ValidateQueryText(queryString);
             var parameterExpression = Expression.Parameter(typeof(T));
 
-            var tokens = _reducer.GetWhereSegments(queryString);
-            var expression = _reducer.ReduceGroupSegments(tokens, parameterExpression);
+            var expression = _reducer.ProcessQueryText<T>(queryString, parameterExpression);
             return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
         }
 
@@ -35,19 +34,17 @@ namespace UrlFilter
 
             var left = expression.Body;
 
-            var tokens = _reducer.GetWhereSegments(queryString);
-            var right = _reducer.ReduceGroupSegments(tokens, parameterExpression);
-
+            var right = _reducer.ProcessQueryText<T>(queryString, parameterExpression);
             var netExpression = Expression.And(left, right);
+
             return Expression.Lambda<Func<T, bool>>(netExpression, parameterExpression);
         }
 
-        public Expression<Func<T, bool>> FromString<T>(string queryString, ParameterExpression parameterExpression, IDictionary<string, Func<string, object, Expression>> customExpressions) where T : class
-        {
-            _validator.ValidateQueryText(queryString);
-            var tokens = _reducer.GetWhereSegments(queryString, customExpressions.Keys);
-            var expression = _reducer.ReduceGroupSegments(tokens, parameterExpression);
-            return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
-        }
+        //public Expression<Func<T, bool>> FromString<T>(string queryString, ParameterExpression parameterExpression, IDictionary<string, Func<string, object, Expression>> customExpressions) where T : class
+        //{
+        //    _validator.ValidateQueryText(queryString);
+        //    var expression = _reducer.ProcessQueryText<T>(queryString, parameterExpression, customExpressions);
+        //    return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
+        //}
     }
 }

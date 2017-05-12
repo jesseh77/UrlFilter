@@ -84,25 +84,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="content\css\bootstrap-theme.css" />
-    <Content Include="content\css\bootstrap-theme.min.css" />
-    <Content Include="content\css\bootstrap.css" />
-    <Content Include="content\css\bootstrap.min.css" />
-    <Content Include="content\index.html" />
-    <Content Include="content\js\bootstrap.js" />
-    <Content Include="content\js\bootstrap.min.js" />
-    <None Include="content\js\jquery-3.1.1.intellisense.js" />
-    <Content Include="content\js\jquery-3.1.1.js" />
-    <Content Include="content\js\jquery-3.1.1.min.js" />
-    <Content Include="content\js\jquery-3.1.1.slim.js" />
-    <Content Include="content\js\jquery-3.1.1.slim.min.js" />
+    <Content Include="site\css\bootstrap-theme.css" />
+    <Content Include="site\css\bootstrap-theme.min.css" />
+    <Content Include="site\css\bootstrap.css" />
+    <Content Include="site\css\bootstrap.min.css" />
+    <Content Include="site\index.html" />
+    <Content Include="site\js\bootstrap.js" />
+    <Content Include="site\js\bootstrap.min.js" />
+    <None Include="site\js\jquery-3.1.1.intellisense.js" />
+    <Content Include="site\js\jquery-3.1.1.js" />
+    <Content Include="site\js\jquery-3.1.1.min.js" />
+    <Content Include="site\js\jquery-3.1.1.slim.js" />
+    <Content Include="site\js\jquery-3.1.1.slim.min.js" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
-    <Content Include="content\css\bootstrap-theme.css.map" />
-    <Content Include="content\css\bootstrap-theme.min.css.map" />
-    <Content Include="content\css\bootstrap.css.map" />
-    <Content Include="content\css\bootstrap.min.css.map" />
-    <Content Include="content\js\jquery-3.1.1.min.map" />
-    <Content Include="content\js\jquery-3.1.1.slim.min.map" />
+    <Content Include="site\css\bootstrap-theme.css.map" />
+    <Content Include="site\css\bootstrap-theme.min.css.map" />
+    <Content Include="site\css\bootstrap.css.map" />
+    <Content Include="site\css\bootstrap.min.css.map" />
+    <Content Include="site\js\jquery-3.1.1.min.map" />
+    <Content Include="site\js\jquery-3.1.1.slim.min.map" />
     <Content Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

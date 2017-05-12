@@ -63,7 +63,7 @@ namespace UrlFilter.Tests
             Expression<Func<TestDocument, bool>> expression = x => x.Value > 3;
             var filter = "value lt 7";
             var testDocs = GetTestDocuments(10);
-            var expected = new[] {4, 5, 6};
+            var expected = new[] { 4, 5, 6 };
 
             var resultExpression = WhereExpression.Build.FromString(filter, expression);
             var result = testDocs.Where(resultExpression).ToList();
