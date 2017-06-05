@@ -100,6 +100,8 @@
   <ItemGroup>
     <Compile Include="Address.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="data\HockeyStat.cs" />
+    <Compile Include="data\Loader.cs" />
     <Compile Include="DemoData.cs" />
     <Compile Include="FilterData.cs" />
     <Compile Include="FilterResponse.cs" />
