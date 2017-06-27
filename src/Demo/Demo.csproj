@@ -25,6 +25,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <ApplicationInsightsResourceId />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -84,26 +85,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="site\css\bootstrap-theme.css" />
-    <Content Include="site\css\bootstrap-theme.min.css" />
-    <Content Include="site\css\bootstrap.css" />
-    <Content Include="site\css\bootstrap.min.css" />
     <Content Include="site\index.html" />
-    <Content Include="site\js\bootstrap.js" />
-    <Content Include="site\js\bootstrap.min.js" />
-    <None Include="site\js\jquery-3.1.1.intellisense.js" />
-    <Content Include="site\js\jquery-3.1.1.js" />
-    <Content Include="site\js\jquery-3.1.1.min.js" />
-    <Content Include="site\js\jquery-3.1.1.slim.js" />
-    <Content Include="site\js\jquery-3.1.1.slim.min.js" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
-    <Content Include="site\css\bootstrap-theme.css.map" />
-    <Content Include="site\css\bootstrap-theme.min.css.map" />
-    <Content Include="site\css\bootstrap.css.map" />
-    <Content Include="site\css\bootstrap.min.css.map" />
-    <Content Include="site\js\jquery-3.1.1.min.map" />
-    <Content Include="site\js\jquery-3.1.1.slim.min.map" />
     <Content Include="packages.config" />
+    <Content Include="data\SimpsonsEpisodes.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -117,6 +102,8 @@
   <ItemGroup>
     <Compile Include="Address.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="data\Episode.cs" />
+    <Compile Include="data\Loader.cs" />
     <Compile Include="DemoData.cs" />
     <Compile Include="FilterData.cs" />
     <Compile Include="FilterResponse.cs" />
