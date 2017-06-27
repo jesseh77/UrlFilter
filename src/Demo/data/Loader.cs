@@ -9,13 +9,12 @@ namespace DemoApi.data
 {
     public class Loader
     {
-        public List<HockeyStat> Stats { get; set; }
+        public List<Episode> Stats { get; set; }
 
         public void LoadData()
         {
-            JsonTextReader reader = new JsonTextReader(new StreamReader("Hockey.json"));
-            Stats = JsonConvert.DeserializeObject<List<HockeyStat>>(File.ReadAllText("Hockey.json"));
-
+            Stats = JsonConvert.DeserializeObject<List<Episode>>(File.ReadAllText("SimpsonsEpisodes.json"));
+            
         }
     }
 }
