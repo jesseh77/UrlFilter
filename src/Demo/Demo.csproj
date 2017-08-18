@@ -88,7 +88,7 @@
     <Content Include="site\index.html" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
     <Content Include="packages.config" />
-    <Content Include="data\SimpsonsEpisodes.json" />
+    <Content Include="data\NHL2016.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -102,7 +102,7 @@
   <ItemGroup>
     <Compile Include="Address.cs" />
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="data\Episode.cs" />
+    <Compile Include="data\HockeyStat.cs" />
     <Compile Include="data\Loader.cs" />
     <Compile Include="DemoData.cs" />
     <Compile Include="FilterData.cs" />
