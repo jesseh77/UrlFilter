@@ -83,19 +83,43 @@ namespace UrlFilter
             return ReduceGroupSegments(tokens, parameterExpression);
         }
 
-        private List<Token> MapSegmentsToTokens(List<string> segments)
+        private List<Token> MapSegmentsToTokens(IEnumerable<string> segments)
         {
             return segments.Select(x => new Token(x)).ToList();
         }
 
-        private static List<string> SplitQueryTextSegments(string queryString)
+        private static IEnumerable<string> SplitQueryTextSegments(string queryString)
         {
-            return queryString
-                .Replace("(", " ( ")
-                .Replace(")", " ) ")
-                .Split(' ')
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .ToList();
+            int segmentStart = 0;
+            char segmentDelimiter = ' ';
+            
+            for (int i = 0; i < queryString.Length; i++)
+            {
+                var currentCharacter = queryString[i];
+                if (currentCharacter == '(' || currentCharacter == ')')
+                {
+                    yield return currentCharacter.ToString();
+                }
+
+                if(segmentDelimiter == ' ' && currentCharacter == ' ')
+                {
+                    continue;
+                }
+
+                if(currentCharacter == segmentDelimiter)
+                {
+                    var segment = queryString.Substring(segmentStart, i - segmentStart);
+                    segmentDelimiter = ' ';
+
+                    yield return segment;
+                }
+
+                if(currentCharacter == '\'' || currentCharacter == ' ')
+                {
+                    segmentStart = i + 1;
+                    segmentDelimiter = currentCharacter;
+                }
+            }
         }
     }
 }

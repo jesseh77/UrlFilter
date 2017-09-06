@@ -29,11 +29,11 @@ namespace UrlFilter.Tests
         [InlineData(10, "value eq 3 or value eq 5 and value gt 4", new [] {3,5})]
         [InlineData(10, "(value eq 3 or value eq 5) and value gt 4", new [] {5})]
         [InlineData(10, "anothervalue eq 1 and (value eq 3 or value eq 4)", new[] { 4 })]
-        [InlineData(10, "text eq 'Item7'", new [] {7})]
-        [InlineData(10, "text eq Item7", new [] {7})]
-        [InlineData(10, "text eq 'Item7' or text eq 'Item2'", new [] {2,7})]
-        [InlineData(10, "value gt 6 and value le 9 or text eq 'Item2'", new [] {2,7,8,9})]
-        [InlineData(10, "text eq 'Item7' and value gt 5", new [] {7})]
+        [InlineData(10, "text eq 'Item 7'", new [] {7})]
+        [InlineData(10, "text eq Item 7", new [] {7})]
+        [InlineData(10, "text eq 'Item 7' or text eq 'Item 2'", new [] {2,7})]
+        [InlineData(10, "value gt 6 and value le 9 or text eq 'Item 2'", new [] {2,7,8,9})]
+        [InlineData(10, "text eq 'Item 7' and value gt 5", new [] {7})]
         public void should_return_match_count(int qty, string query, int[] expectedValues)
         {
             var testDocs = GetTestDocuments(qty);
@@ -74,8 +74,8 @@ namespace UrlFilter.Tests
         private static IQueryable<TestDocument> GetTestDocuments(int quantity)
         {
             return Enumerable.Range(1, quantity)
-                .Select(x => new TestDocument { Value = x, AnotherValue = Math.Pow(-1,x), Text = $"Item{x}",
-                    SubDocument = new TestDocument { Value = x * 100, Text = $"Item{x * 100 }" } })
+                .Select(x => new TestDocument { Value = x, AnotherValue = Math.Pow(-1,x), Text = $"Item {x}",
+                    SubDocument = new TestDocument { Value = x * 100, Text = $"Item {x * 100 }" } })
                     .AsQueryable();
         }
     }
