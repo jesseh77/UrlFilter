@@ -32,9 +32,9 @@ namespace UrlFilter
             };
         }
 
-        internal Expression ReduceGroupSegments(List<Token> tokens, ParameterExpression parameterExpression)
+        internal Expression ReduceGroupSegments(IEnumerable<Token> tokens, ParameterExpression parameterExpression)
         {
-            var currentTokens = tokens;
+            var currentTokens = tokens.ToList();
             while (currentTokens.Count != 1)
             {
                 currentTokens = ProcessGroupPriority(currentTokens, parameterExpression);
@@ -83,41 +83,64 @@ namespace UrlFilter
             return ReduceGroupSegments(tokens, parameterExpression);
         }
 
-        private List<Token> MapSegmentsToTokens(IEnumerable<string> segments)
+        private IEnumerable<Token> MapSegmentsToTokens(IEnumerable<string> segments)
         {
-            return segments.Select(x => new Token(x)).ToList();
+            return segments.Select(x => new Token(x));
         }
 
         private static IEnumerable<string> SplitQueryTextSegments(string queryString)
         {
             int segmentStart = 0;
             char segmentDelimiter = ' ';
+            int length = queryString.Length;
             
-            for (int i = 0; i < queryString.Length; i++)
+            for (int i = 0; i < length; i++)
             {
                 var currentCharacter = queryString[i];
-                if (currentCharacter == '(' || currentCharacter == ')')
+                
+                if (currentCharacter == '(')
                 {
+                    segmentDelimiter = ' ';
+                    segmentStart = i + 1;
                     yield return currentCharacter.ToString();
                 }
 
-                if(segmentDelimiter == ' ' && currentCharacter == ' ')
+                if (currentCharacter == ')')
                 {
-                    continue;
+                    segmentDelimiter = ' ';
+                    yield return queryString.Substring(segmentStart, i - segmentStart);
+                    yield return currentCharacter.ToString();
+                    segmentStart = i + 1;
                 }
 
-                if(currentCharacter == segmentDelimiter)
+                if (currentCharacter == segmentDelimiter)
                 {
                     var segment = queryString.Substring(segmentStart, i - segmentStart);
                     segmentDelimiter = ' ';
-
-                    yield return segment;
+                    if(segment.Length != 0)
+                    {
+                        yield return segment;
+                    }
+                    segmentStart = i + 1;
+                    continue;
                 }
 
-                if(currentCharacter == '\'' || currentCharacter == ' ')
+                if(currentCharacter == '\'')
                 {
                     segmentStart = i + 1;
                     segmentDelimiter = currentCharacter;
+                }
+
+                if (currentCharacter == ' ')
+                {
+                    if(segmentDelimiter == '\'') { continue; }
+                    segmentStart = i + 1;
+                    segmentDelimiter = currentCharacter;
+                }
+
+                if (i == length - 1)
+                {
+                    yield return queryString.Substring(segmentStart);
                 }
             }
         }
