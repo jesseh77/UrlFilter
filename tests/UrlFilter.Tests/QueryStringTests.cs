@@ -35,6 +35,8 @@ namespace UrlFilter.Tests
         [InlineData(10, "text eq 'Item 7' or text eq 'Item 2'", new [] {2,7})]
         [InlineData(10, "value gt 6 and value le 9 or text eq 'Item 2'", new [] {2,7,8,9})]
         [InlineData(10, "text eq 'Item 7' and value gt 5", new [] {7})]
+        [InlineData(10, "nullablevalue gt 3", new[] { 5, 7, 9 })]
+        [InlineData(10, "nullablevalue eq null", new[] { 2, 4, 6, 8, 10 })]
         public void should_return_match_count(int qty, string query, int[] expectedValues)
         {
             var testDocs = GetTestDocuments(qty);
@@ -75,7 +77,7 @@ namespace UrlFilter.Tests
         private static IQueryable<TestDocument> GetTestDocuments(int quantity)
         {
             return Enumerable.Range(1, quantity)
-                .Select(x => new TestDocument { Value = x, AnotherValue = Math.Pow(-1,x), Text = $"Item {x}", MoreText = $"Item{x}",
+                .Select(x => new TestDocument { Value = x, AnotherValue = Math.Pow(-1,x), NullableValue = x % 2 == 0 ? null : (int?)x, Text = $"Item {x}", MoreText = $"Item{x}",
                     SubDocument = new TestDocument { Value = x * 100, Text = $"Item {x * 100 }", MoreText = $"Item{x * 100 }" } })
                     .AsQueryable();
         }
