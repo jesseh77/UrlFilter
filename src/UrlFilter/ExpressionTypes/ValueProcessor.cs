@@ -57,18 +57,18 @@ namespace UrlFilter.ExpressionProcessors
 
                     var expressionValue = StripOuterSingleQuotes(current.Next.Next.Value.TokenValue);
 
-                    var propValue = Convert.ChangeType(expressionValue, propertyInfo.PropertyType);
+                    var propValue = ConvertValue(expressionValue, propertyInfo.PropertyType);
                     var rightExpression = Expression.Constant(propValue);
 
                     var operationType = current.Next.Value.TokenValue;
-                    var tailExpression = _operators.OperatorExpression(operationType, parameterExpression, rightExpression);
+                    var valueExpression = _operators.OperatorExpression(operationType, parameterExpression, rightExpression);
 
                     if (current.Next.Value.IsNot)
                     {
-                        tailExpression = Expression.Not(tailExpression);
+                        valueExpression = Expression.Not(valueExpression);
                     }
 
-                    returnExpression = AndAlso(returnExpression, tailExpression);
+                    returnExpression = AndAlso(returnExpression, valueExpression);
                     current.Next.Value.OperatorExpression = returnExpression;
 
                     tokens.Remove(current.Next.Next);
@@ -81,6 +81,13 @@ namespace UrlFilter.ExpressionProcessors
                     current = current.Next;
                 }
             }
+        }
+
+        private object ConvertValue(string expressionValue, Type propertyType)
+        {
+            if(expressionValue.Equals("null", StringComparison.CurrentCultureIgnoreCase)) { return null; }
+            Type t = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
+            return Convert.ChangeType(expressionValue, t);
         }
 
         private static Expression AndAlso(Expression left, Expression right)
