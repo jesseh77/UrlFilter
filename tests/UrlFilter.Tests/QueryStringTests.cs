@@ -35,8 +35,9 @@ namespace UrlFilter.Tests
         [InlineData(10, "text eq 'Item 7' or text eq 'Item 2'", new [] {2,7})]
         [InlineData(10, "value gt 6 and value le 9 or text eq 'Item 2'", new [] {2,7,8,9})]
         [InlineData(10, "text eq 'Item 7' and value gt 5", new [] {7})]
-        [InlineData(10, "nullablevalue gt 3", new[] { 5, 7, 9 })]
         [InlineData(10, "nullablevalue eq null", new[] { 2, 4, 6, 8, 10 })]
+        [InlineData(10, "not nullablevalue eq null", new[] { 1, 3, 5, 7, 9 })]
+        [InlineData(10, "not nullablevalue eq null and value gt 5", new[] { 7, 9 })]
         public void should_return_match_count(int qty, string query, int[] expectedValues)
         {
             var testDocs = GetTestDocuments(qty);
