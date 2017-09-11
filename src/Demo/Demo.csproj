@@ -104,7 +104,7 @@
     <Compile Include="data\DemoData.cs" />
     <Compile Include="data\HockeyStat.cs" />
     <Compile Include="data\ILoadDemoData.cs" />
-    <Compile Include="FilterData.cs" />
+    <Compile Include="FilterDataModule.cs" />
     <Compile Include="FilterResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

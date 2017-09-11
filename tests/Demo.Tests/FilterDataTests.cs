@@ -21,10 +21,9 @@ namespace DemoApi.Tests
         }
 
         [InlineData("firstName eq 'Sidney'", 1)]
-        [InlineData("draftRound eq 1 and draftPick le 5", 5)]
-        [InlineData("(playerId lt 8 and playerId ge 2) or (playerId gt 77 and playerId le 79)", 8)]
-        [InlineData("not playerId gt 9 or playerId ge 91", 19)]
-        [Theory]
+        [InlineData("draftRound eq 1 and draftPick le 5", 70)]
+        [InlineData("(penaltyMinutes le 30 and goals ge 20) or (penaltyMinutes ge 100 and goals le 10)", 54)]
+        [Theory(DisplayName = "Demo filter")]
         public void should_get_filtered_result(string filter, int expectedQuantity)
         {
             var response = Get(filter);

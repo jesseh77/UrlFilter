@@ -6,12 +6,12 @@ using DemoApi.data;
 
 namespace DemoApi
 {
-    public class FilterData : NancyModule
+    public class FilterDataModule : NancyModule
     {
         private const int DefaultQuantity = 100;
         private readonly ILoadDemoData<HockeyStat> demoData;
 
-        public FilterData(ILoadDemoData<HockeyStat> demoData)
+        public FilterDataModule(ILoadDemoData<HockeyStat> demoData)
         {
             this.demoData = demoData;
             Get["/filterData"] = x => FilterTheData();            
