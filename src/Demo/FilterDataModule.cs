@@ -2,38 +2,39 @@
 using System.Linq;
 using System.Linq.Expressions;
 using Nancy;
+using DemoApi.data;
 
 namespace DemoApi
 {
-    public class FilterData : NancyModule
+    public class FilterDataModule : NancyModule
     {
-        private readonly IQueryable<DemoPerson> _demoData;
         private const int DefaultQuantity = 100;
-        public FilterData()
+        private readonly ILoadDemoData<HockeyStat> demoData;
+
+        public FilterDataModule(ILoadDemoData<HockeyStat> demoData)
         {
-            _demoData = DemoData.GetDemoData(DefaultQuantity);
-            Get["/filterData"] = x => FilterTheData();
-            Get["/"] = x => Response.AsFile("Content/index.html", "text/html");
+            this.demoData = demoData;
+            Get["/filterData"] = x => FilterTheData();            
         }
 
-        private FilterResponse FilterTheData()
+        private FilterResponse<HockeyStat> FilterTheData()
         {
             var filterText = GetFilterText();
             var expression = GetFilterExpression(filterText);
             if (expression == null)
             {
-                var response = new FilterResponse
+                var response = new FilterResponse<HockeyStat>
                 {
-                    People = _demoData.ToList(),
+                    Values = demoData.Stats.ToList(),
                     FilterText = "",
                     LinqExpression = ""
                 };
                 return response;
             }
 
-            var filteredResponse = new FilterResponse
+            var filteredResponse = new FilterResponse<HockeyStat>
             {
-                People = _demoData.Where(expression).ToList(),
+                Values = demoData.Stats.Where(expression).ToList(),
                 FilterText = filterText,
                 LinqExpression = expression.ToString()
             };
@@ -46,10 +47,10 @@ namespace DemoApi
             return filter ?? string.Empty;
         }
 
-        private Expression<Func<DemoPerson, bool>> GetFilterExpression(string filter)
+        private Expression<Func<HockeyStat, bool>> GetFilterExpression(string filter)
         {
             if (string.IsNullOrEmpty(filter)) return null;
-            var expression = UrlFilter.WhereExpression.Build.FromString<DemoPerson>(filter);
+            var expression = UrlFilter.WhereExpression.Build.FromString<HockeyStat>(filter);
             return expression;
         }        
     }

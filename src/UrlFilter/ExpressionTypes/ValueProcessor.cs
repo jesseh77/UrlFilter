@@ -58,7 +58,7 @@ namespace UrlFilter.ExpressionProcessors
                     var expressionValue = StripOuterSingleQuotes(current.Next.Next.Value.TokenValue);
 
                     var propValue = ConvertValue(expressionValue, propertyInfo.PropertyType);
-                    var rightExpression = Expression.Constant(propValue);
+                    var rightExpression = Expression.Constant(propValue, propertyInfo.PropertyType);
 
                     var operationType = current.Next.Value.TokenValue;
                     var valueExpression = _operators.OperatorExpression(operationType, parameterExpression, rightExpression);
@@ -85,9 +85,11 @@ namespace UrlFilter.ExpressionProcessors
 
         private object ConvertValue(string expressionValue, Type propertyType)
         {
-            if(expressionValue.Equals("null", StringComparison.CurrentCultureIgnoreCase)) { return null; }
+            if (expressionValue.Equals("null", StringComparison.CurrentCultureIgnoreCase)) { return null; }
+
             Type t = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
-            return Convert.ChangeType(expressionValue, t);
+            var convertedValue = Convert.ChangeType(expressionValue, t);
+            return convertedValue;
         }
 
         private static Expression AndAlso(Expression left, Expression right)
@@ -112,8 +114,6 @@ namespace UrlFilter.ExpressionProcessors
                 return value.Substring(1, value.Length - 2);
             }
             return value;
-        }
-
-        
+        }        
     }
 }

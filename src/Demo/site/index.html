@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Url filter demo">
+    <meta name="author" content="Jesse Hamilton">
     <link rel="icon" href="../../favicon.ico">
 
     <title>Url Filter demo site</title>
@@ -15,133 +15,68 @@
 </head>
 
 <body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">Url Filter demo</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container">
-        <!-- Example row of columns -->
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4">
-                <h2>Url Filter</h2>
-                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+            <h2 style="padding-left: 5px">Url Filter</h2>
+        </div>
+        <div class="row">
+            <div class="col-lg-2 col-md-3 col-sm-4">
+                <p>Supported operators</p>
+                <ul style="list-style: none">
+                    <li><b><em>()</em></b> - grouping</li>
+                    <li><b><em>not</em></b> - negation</li>
+                    <li><b><em>and</em></b> - logic and</li>
+                    <li><b><em>or</em></b> - logic or</li>
+                    <li><b><em>eq</em></b> - equal to</li>
+                    <li><b><em>ne</em></b> - not equal to</li>
+                    <li><b><em>gt</em></b> - greater than</li>
+                    <li><b><em>ge</em></b> - greater than or equal</li>
+                    <li><b><em>lt</em></b> - less than</li>
+                    <li><b><em>le</em></b> - less than or equal</li>
+                </ul>
             </div>
-            <div class="col-md-5">
-                <h2>Operators</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Operator</th>
-                            <th>Description</th>
-                            <th>Example</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>eq</td>
-                            <td>Equal</td>
-                            <td>firstname eq 'Bruce'</td>
-                        </tr>
-                        <tr>
-                            <td>ne</td>
-                            <td>Not equal</td>
-                            <td>country ne 'Atlantis'</td>
-                        </tr>
-                        <tr>
-                            <td>gt</td>
-                            <td>Greater than</td>
-                            <td>weight gt 200</td>
-                        </tr>
-                        <tr>
-                            <td>ge</td>
-                            <td>Greater than or equal</td>
-                            <td>height ge 75</td>
-                        </tr>
-                        <tr>
-                            <td>lt</td>
-                            <td>Less than</td>
-                            <td>quantity lt 20</td>
-                        </tr>
-                        <tr>
-                            <td>le</td>
-                            <td>Less than or equal</td>
-                            <td>price le 9.99</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>and</td>
-                            <td>Logical and</td>
-                            <td>price le 75 and cost gt 40</td>
-                        </tr>
-                        <tr>
-                            <td>or</td>
-                            <td>Logical or</td>
-                            <td>superpower eq 'speed' or superpower eq 'strength'</td>
-                        </tr>
-                        <tr>
-                            <td>not</td>
-                            <td>Logical negation</td>
-                            <td>not secretidentity eq 'Oliver Queen'</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>( )</td>
-                            <td>Precedence grouping</td>
-                            <td>(priority eq 1 or city eq 'Metropolis') and price gt 100</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-3">
-                <h2>Model</h2>
-                <div>{</div>
-                <div>"id": 14,</div>
-                <div>"firstName": "Annabelle",</div>
-                <div>"lastName": "Torp",</div>
-                <div>"height": 180,</div>
-                <div>"hairColor": "orange",</div>
-                <div>"eyeColor": "green",</div>
-                <div>"team": 7,</div>
-                <div>"address":</div>
-                <div>&nbsp;&nbsp;&nbsp;&nbsp;{</div>
-                <div>&nbsp;&nbsp;&nbsp;&nbsp;"Unit": 1,</div>
-                <div>&nbsp;&nbsp;&nbsp;&nbsp;"Address1": "413 Jaskolski Isle",</div>
-                <div>&nbsp;&nbsp;&nbsp;&nbsp;"City": "Kleinhaven"</div>
-                <div>&nbsp;&nbsp;&nbsp;&nbsp;}</div>
-                <div>}</div>
+            <div class="col-lg-10 col-md-9 col-sm-8">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <div class="row">
+                            <label for="queryText" class="col-sm-1 control-label">Query</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="queryText" placeholder="Placeholder">
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="submit" class="btn btn-primary" id="submitQuery" onclick="submitQuery()">Execute</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="queryText" class="col-sm-1 control-label">Expression</label>
+                            <div class="col-sm-9">
+                                <p class="help-block">Execute query to see generated Linq Expression</p>
+                            </div>
+                        </div>
+                    </div>                            
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-10 col-sm-offset-1">
+                        <table id="playerGrid" class="table table-condensed table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th data-column-id="id" data-type="numeric">ID</th>
+                                    <th data-column-id="sender">Sender</th>
+                                    <th data-column-id="received" data-order="desc">Received</th>
+                                    <th data-column-id="link" data-formatter="link" data-sortable="false">Link</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <hr>
-
-        <footer>
-            <p>&copy; 2016 Company, Inc.</p>
-        </footer>
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
             crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="./app.js"></script>
 </body>
 </html>
