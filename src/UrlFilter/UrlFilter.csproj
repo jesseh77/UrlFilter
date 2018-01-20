@@ -9,6 +9,7 @@
     <Description>Builds linq expressions from query string filters</Description>
     <Authors>Jesse Hamilton</Authors>
     <Company />
+    <Version>1.0.104</Version>
   </PropertyGroup>
 
 </Project>
