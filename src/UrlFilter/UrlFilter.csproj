@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Copyright>Copyright 2018</Copyright>
+    <PackageProjectUrl>https://github.com/jesseh77/UrlFilter</PackageProjectUrl>
+    <PackageTags>linq expression url filter</PackageTags>
+    <Description>Builds linq expressions from query string filters</Description>
+    <Authors>Jesse Hamilton</Authors>
+    <Company />
   </PropertyGroup>
 
 </Project>
