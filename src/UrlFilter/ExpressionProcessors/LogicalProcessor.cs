@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+using UrlFilter.ExpressionProcessors;
 
 namespace UrlFilter.ExpressionTypes
 {
@@ -16,7 +13,10 @@ namespace UrlFilter.ExpressionTypes
             _operands = operands;
             _operators = operators;
         }
-        public bool canProcess(string operand)
+
+        public ExpressionCategory ExpressionCategory => ExpressionCategory.Logical;
+
+        public bool CanProcess(string operand)
         {
             if (string.IsNullOrWhiteSpace(operand)) return false;
             return _operands.Contains(operand.ToLower());
@@ -27,7 +27,7 @@ namespace UrlFilter.ExpressionTypes
             var current = tokens.First.Next;
             while (current != null && current.Next != null)
             {
-                if (canProcess(current.Value.TokenValue))
+                if (CanProcess(current.Value.TokenValue))
                 {
                     var tokenValue = current.Value.TokenValue;
                     var leftExpression = current.Previous.Value.OperatorExpression;

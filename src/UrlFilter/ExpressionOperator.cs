@@ -9,13 +9,21 @@ namespace UrlFilter
         private static readonly Dictionary<string, Func<Expression, Expression, Expression>> Expressions = GetExpressions();
         public Expression OperatorExpression(string operation, Expression left, Expression right)
         {
-            var lowerOperation = operation.Trim().ToLowerInvariant();
-            Func<Expression, Expression, Expression> expression;
-            if (Expressions.TryGetValue(lowerOperation, out expression))
+            if (CanProcessOperand(operation))
             {
-                return expression(left, right);
+                var key = operation.Trim().ToLowerInvariant();
+                return Expressions[key](left, right);
             }
+            
             throw new QueryStringException($"Filter of type '{operation}' is not a valid query string operator");
+        }
+
+        public bool CanProcessOperand(string operand)
+        {
+            if (string.IsNullOrWhiteSpace(operand)) { return false; }
+
+            var key = operand.Trim().ToLowerInvariant();
+            return Expressions.ContainsKey(key);
         }
 
         private static Dictionary<string, Func<Expression, Expression, Expression>> GetExpressions()

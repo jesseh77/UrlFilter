@@ -24,22 +24,22 @@ namespace UrlFilter
         {
             return new List<IExpressionProcessor>
             {
+                new LogicalProcessor(new List<string>{"and"}, _operators),
+                new LogicalProcessor(new List<string>{"or"}, _operators),
                 new UnaryProcessor(new List<string>{"not"}),
                 new ValueProcessor(new List<string>{"gt", "ge", "lt", "le"}, _operators),
-                new ValueProcessor(new List<string>{"eq", "ne"}, _operators),
-                new LogicalProcessor(new List<string>{"and"}, _operators),
-                new LogicalProcessor(new List<string>{"or"}, _operators)
+                new ValueProcessor(new List<string>{"eq", "ne"}, _operators)
+                
             };
         }
 
-        internal Expression ReduceGroupSegments(IEnumerable<Token> tokens, ParameterExpression parameterExpression)
+        internal Expression ReduceGroupSegments(List<Token> tokens, ParameterExpression parameterExpression)
         {
-            var currentTokens = tokens.ToList();
-            while (currentTokens.Count != 1)
+            while (tokens.Count != 1)
             {
-                currentTokens = ProcessGroupPriority(currentTokens, parameterExpression);
+                tokens = ProcessGroupPriority(tokens, parameterExpression);
             }
-            return currentTokens.Single().OperatorExpression;
+            return tokens.Single().OperatorExpression;
         }
 
         private List<Token> ProcessGroupPriority(List<Token> tokens, ParameterExpression parameterExpression)
@@ -83,9 +83,9 @@ namespace UrlFilter
             return ReduceGroupSegments(tokens, parameterExpression);
         }
 
-        private IEnumerable<Token> MapSegmentsToTokens(IEnumerable<string> segments)
+        private List<Token> MapSegmentsToTokens(IEnumerable<string> segments)
         {
-            return segments.Select(x => new Token(x));
+            return segments.Select(x => new Token(x)).ToList();
         }
 
         private static IEnumerable<string> SplitQueryTextSegments(string queryString)

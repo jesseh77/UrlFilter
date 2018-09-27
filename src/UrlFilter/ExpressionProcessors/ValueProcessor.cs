@@ -10,6 +10,8 @@ namespace UrlFilter.ExpressionProcessors
     {
         private readonly ExpressionOperator _operators;
         private readonly List<string> _operands;
+        
+        public ExpressionCategory ExpressionCategory => ExpressionCategory.Value;
 
         public ValueProcessor(List<string> operands, ExpressionOperator operators)
         {
@@ -17,7 +19,7 @@ namespace UrlFilter.ExpressionProcessors
             _operators = operators;
         }
 
-        public bool canProcess(string operand)
+        public bool CanProcess(string operand)
         {
             if (string.IsNullOrWhiteSpace(operand)) return false;
             return _operands.Contains(operand.ToLower());
@@ -25,12 +27,12 @@ namespace UrlFilter.ExpressionProcessors
 
         public void Process(LinkedList<Token> tokens, ParameterExpression paramExpression)
         {
-            var current = tokens.First;
-            while (current.Next != null)
+            var currentToken = tokens.First;
+            while (currentToken.Next != null)
             {
-                if (canProcess(current.Next.Value.TokenValue))
+                if (CanProcess(currentToken.Next.Value.TokenValue))
                 {
-                    var propertyName = current.Value.TokenValue;
+                    var propertyName = currentToken.Value.TokenValue;
 
                     Expression parameterExpression = paramExpression;
                     Expression returnExpression = null;
@@ -55,30 +57,30 @@ namespace UrlFilter.ExpressionProcessors
                         }
                     }
 
-                    var expressionValue = StripOuterSingleQuotes(current.Next.Next.Value.TokenValue);
+                    var expressionValue = StripOuterSingleQuotes(currentToken.Next.Next.Value.TokenValue);
 
                     var propValue = ConvertValue(expressionValue, propertyInfo.PropertyType);
                     var rightExpression = Expression.Constant(propValue, propertyInfo.PropertyType);
 
-                    var operationType = current.Next.Value.TokenValue;
+                    var operationType = currentToken.Next.Value.TokenValue;
                     var valueExpression = _operators.OperatorExpression(operationType, parameterExpression, rightExpression);
 
-                    if (current.Next.Value.IsNot)
+                    if (currentToken.Next.Value.IsNot)
                     {
                         valueExpression = Expression.Not(valueExpression);
                     }
 
                     returnExpression = AndAlso(returnExpression, valueExpression);
-                    current.Next.Value.OperatorExpression = returnExpression;
+                    currentToken.Next.Value.OperatorExpression = returnExpression;
 
-                    tokens.Remove(current.Next.Next);
-                    var next = current.Next;
-                    tokens.Remove(current);
-                    current = next;
+                    tokens.Remove(currentToken.Next.Next);
+                    var next = currentToken.Next;
+                    tokens.Remove(currentToken);
+                    currentToken = next;
                 }
                 else
                 {
-                    current = current.Next;
+                    currentToken = currentToken.Next;
                 }
             }
         }

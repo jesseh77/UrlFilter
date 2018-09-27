@@ -7,7 +7,10 @@ namespace UrlFilter.ExpressionProcessors
     internal class UnaryProcessor : IExpressionProcessor
     {
         private readonly List<string> _operands;
-        public bool canProcess(string operand)
+
+        public ExpressionCategory ExpressionCategory => ExpressionCategory.Unary;
+
+        public bool CanProcess(string operand)
         {
             if (string.IsNullOrWhiteSpace(operand)) return false;
             return _operands.Contains(operand.ToLower());
@@ -23,7 +26,7 @@ namespace UrlFilter.ExpressionProcessors
             var current = tokens.First;
             while (current.Next != null)
             {
-                if (canProcess(current.Value.TokenValue))
+                if (CanProcess(current.Value.TokenValue))
                 {
                     current.Next.Next.Value.IsNot = true;
                     var next = current.Next;
