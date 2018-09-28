@@ -22,14 +22,16 @@ namespace UrlFilter
 
         public List<IExpressionProcessor> GetExpressionProcessors()
         {
-            return new List<IExpressionProcessor>
+            return new IExpressionProcessor[]
             {
                 new UnaryProcessor(new List<string>{"not"}),
                 new ValueProcessor(new List<string>{"gt", "ge", "lt", "le"}, _operators),
                 new ValueProcessor(new List<string>{"eq", "ne"}, _operators),                
                 new LogicalProcessor(new List<string>{"and"}, _operators),
                 new LogicalProcessor(new List<string>{"or"}, _operators)
-            };
+            }
+            .OrderBy(x => x.ExpressionCategory)
+            .ToList();
         }
 
         public Expression ReduceGroupSegments(List<Token> tokens, ParameterExpression parameterExpression)
