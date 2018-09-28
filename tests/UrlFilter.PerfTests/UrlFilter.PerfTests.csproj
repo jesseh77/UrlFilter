@@ -9,4 +9,8 @@
     <PackageReference Include="BenchmarkDotNet" Version="0.11.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\UrlFilter\UrlFilter.csproj" />
+  </ItemGroup>
+
 </Project>
