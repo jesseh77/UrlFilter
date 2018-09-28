@@ -1,6 +1,6 @@
 ﻿namespace UrlFilter.ExpressionProcessors
 {
-    enum ExpressionCategory
+    public enum ExpressionCategory
     {
         Logical,
         Unary,

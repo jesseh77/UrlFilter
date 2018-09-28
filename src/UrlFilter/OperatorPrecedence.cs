@@ -2,11 +2,11 @@
 
 namespace UrlFilter
 {
-    internal class OperatorPrecedence
+    public class OperatorPrecedence
     {
         private static readonly Dictionary<string, Precedence> Precedences = GetPresedences();
 
-        internal Precedence GetOperatorPrecedence(string operation, ICollection<string> customOperators = null )
+        public Precedence GetOperatorPrecedence(string operation)
         {
             var operationName = operation.Trim().ToLowerInvariant();
             Precedence precedence;
@@ -14,15 +14,10 @@ namespace UrlFilter
             {
                 return precedence;
             }
-
-            if (customOperators != null && customOperators.Contains(operationName))
-            {
-                return Precedence.Custom;
-            }
             return Precedence.Value;
         }
 
-        private static Dictionary<string, Precedence> GetPresedences()
+        public static Dictionary<string, Precedence> GetPresedences()
         {
             return new Dictionary<string, Precedence>
             {
@@ -40,16 +35,15 @@ namespace UrlFilter
             };
         }
 
-        internal enum Precedence
+        public enum Precedence
         {
-            Value,
+            Grouping,
+            Unary,
+            Relational,
+            Equality,
             ConditionalOr,
             ConditionalAnd,
-            Custom,
-            Equality,
-            Relational,
-            Unary,
-            Grouping
+            Value
         }
     }
 }

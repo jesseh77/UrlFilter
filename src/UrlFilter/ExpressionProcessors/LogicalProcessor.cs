@@ -4,7 +4,7 @@ using UrlFilter.ExpressionProcessors;
 
 namespace UrlFilter.ExpressionTypes
 {
-    internal class LogicalProcessor : IExpressionProcessor
+    public class LogicalProcessor : IExpressionProcessor
     {
         private List<string> _operands;
         private ExpressionOperator _operators;

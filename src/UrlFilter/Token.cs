@@ -2,7 +2,7 @@
 
 namespace UrlFilter
 {
-    internal class Token
+    public class Token
     {
         public Token() { }
         public Token(string tokenValue)

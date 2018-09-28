@@ -7,7 +7,7 @@ using UrlFilter.ExpressionTypes;
 
 namespace UrlFilter
 {
-    internal class ExpressionReducer
+    public class ExpressionReducer
     {
         private readonly ExpressionOperator _operators;
         private readonly List<IExpressionProcessor> _processors;
@@ -20,20 +20,19 @@ namespace UrlFilter
             _precedence = new OperatorPrecedence();
         }
 
-        private List<IExpressionProcessor> GetExpressionProcessors()
+        public List<IExpressionProcessor> GetExpressionProcessors()
         {
             return new List<IExpressionProcessor>
             {
-                new LogicalProcessor(new List<string>{"and"}, _operators),
-                new LogicalProcessor(new List<string>{"or"}, _operators),
                 new UnaryProcessor(new List<string>{"not"}),
                 new ValueProcessor(new List<string>{"gt", "ge", "lt", "le"}, _operators),
-                new ValueProcessor(new List<string>{"eq", "ne"}, _operators)
-                
+                new ValueProcessor(new List<string>{"eq", "ne"}, _operators),                
+                new LogicalProcessor(new List<string>{"and"}, _operators),
+                new LogicalProcessor(new List<string>{"or"}, _operators)
             };
         }
 
-        internal Expression ReduceGroupSegments(List<Token> tokens, ParameterExpression parameterExpression)
+        public Expression ReduceGroupSegments(List<Token> tokens, ParameterExpression parameterExpression)
         {
             while (tokens.Count != 1)
             {
@@ -42,7 +41,7 @@ namespace UrlFilter
             return tokens.Single().OperatorExpression;
         }
 
-        private List<Token> ProcessGroupPriority(List<Token> tokens, ParameterExpression parameterExpression)
+        public List<Token> ProcessGroupPriority(List<Token> tokens, ParameterExpression parameterExpression)
         {
             var leftBracket = 0;
 
@@ -66,7 +65,7 @@ namespace UrlFilter
             return new List<Token> { new Token { OperatorExpression = ReduceExpressionSegments(new LinkedList<Token>(tokens), parameterExpression) } };
         }
 
-        private Expression ReduceExpressionSegments(LinkedList<Token> linkedList, ParameterExpression parameterExpression)
+        public Expression ReduceExpressionSegments(LinkedList<Token> linkedList, ParameterExpression parameterExpression)
         {
             foreach (var processor in _processors)
             {
@@ -76,19 +75,19 @@ namespace UrlFilter
             return linkedList.First.Value.OperatorExpression;
         }
 
-        internal Expression ProcessQueryText<T>(string queryString, ParameterExpression parameterExpression)
+        public Expression ProcessQueryText<T>(string queryString, ParameterExpression parameterExpression)
         {
             var segments = SplitQueryTextSegments(queryString);
             var tokens = MapSegmentsToTokens(segments);
             return ReduceGroupSegments(tokens, parameterExpression);
         }
 
-        private List<Token> MapSegmentsToTokens(IEnumerable<string> segments)
+        public List<Token> MapSegmentsToTokens(IEnumerable<string> segments)
         {
             return segments.Select(x => new Token(x)).ToList();
         }
 
-        private static IEnumerable<string> SplitQueryTextSegments(string queryString)
+        public IEnumerable<string> SplitQueryTextSegments(string queryString)
         {
             int segmentStart = 0;
             char segmentDelimiter = ' ';
