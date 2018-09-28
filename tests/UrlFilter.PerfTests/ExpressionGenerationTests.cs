@@ -1,25 +1,24 @@
 ﻿using BenchmarkDotNet.Attributes;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace UrlFilter.PerfTests
 {
     public class ExpressionGenerationTests
     {
-        private static List<string> filters = loadFilters();
         private static WhereExpression expressionProcessor = new WhereExpression();
 
         [Benchmark]
-        public void GenerateExpressions()
+        public Expression GenerateExpressions()
         {
-            foreach (var filter in filters)
-            {
-                var result = expressionProcessor.FromString<TestDocument>(filter);
-            }
+            return expressionProcessor.FromString<TestDocument>(Filter);
         }
 
-        private static List<string> loadFilters()
+        [ParamsSource(nameof(Filters))]
+        private string Filter { get; set; }
+        private static IEnumerable<string> Filters()
         {
-            return new List<string>
+            return new string[]
             {
                 "Value eq 3",
                 "value EQ 3",
