@@ -8,21 +8,21 @@ namespace UrlFilter.ExpressionProcessors
 {
     public class ValueProcessor : IExpressionProcessor
     {
-        private readonly ExpressionOperator _operators;
-        private readonly List<string> _operands;
+        private readonly Func<Expression, Expression, Expression> expression;
+        private readonly string operand;
         
         public ExpressionCategory ExpressionCategory => ExpressionCategory.Value;
 
-        public ValueProcessor(List<string> operands, ExpressionOperator operators)
+        public ValueProcessor(string operand, Func<Expression, Expression, Expression> expression)
         {
-            _operands = operands;
-            _operators = operators;
+            this.operand = operand;
+            this.expression = expression;
         }
 
         public bool CanProcess(string operand)
         {
             if (string.IsNullOrWhiteSpace(operand)) return false;
-            return _operands.Contains(operand.ToLower());
+            return this.operand.Contains(operand.ToLower());
         }
 
         public void Process(LinkedList<Token> tokens, ParameterExpression paramExpression)
@@ -63,7 +63,7 @@ namespace UrlFilter.ExpressionProcessors
                     var rightExpression = Expression.Constant(propValue, propertyInfo.PropertyType);
 
                     var operationType = currentToken.Next.Value.TokenValue;
-                    var valueExpression = _operators.OperatorExpression(operationType, parameterExpression, rightExpression);
+                    var valueExpression = expression(parameterExpression, rightExpression);
 
                     if (currentToken.Next.Value.IsNot)
                     {

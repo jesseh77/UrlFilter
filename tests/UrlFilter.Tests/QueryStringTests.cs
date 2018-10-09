@@ -78,8 +78,7 @@ namespace UrlFilter.Tests
         private static IQueryable<TestDocument> GetTestDocuments(int quantity)
         {
             return Enumerable.Range(1, quantity)
-                .Select(x => new TestDocument { Value = x, AnotherValue = Math.Pow(-1,x), NullableValue = x % 2 == 0 ? null : (int?)x, Text = $"Item {x}", MoreText = $"Item{x}",
-                    SubDocument = new TestDocument { Value = x * 100, Text = $"Item {x * 100 }", MoreText = $"Item{x * 100 }" } })
+                .Select(x => new TestDocument(x, true))
                     .AsQueryable();
         }
     }

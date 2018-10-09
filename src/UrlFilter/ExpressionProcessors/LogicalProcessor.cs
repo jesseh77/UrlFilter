@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using UrlFilter.ExpressionProcessors;
 
@@ -6,12 +7,12 @@ namespace UrlFilter.ExpressionTypes
 {
     public class LogicalProcessor : IExpressionProcessor
     {
-        private List<string> _operands;
-        private ExpressionOperator _operators;
-        public LogicalProcessor(List<string> operands, ExpressionOperator operators)
+        private readonly string operand;
+        private Func<Expression, Expression, Expression> expression;
+        public LogicalProcessor(string operand, Func<Expression, Expression, Expression> expression)
         {
-            _operands = operands;
-            _operators = operators;
+            this.operand = operand;
+            this.expression = expression;
         }
 
         public ExpressionCategory ExpressionCategory => ExpressionCategory.Logical;
@@ -19,7 +20,7 @@ namespace UrlFilter.ExpressionTypes
         public bool CanProcess(string operand)
         {
             if (string.IsNullOrWhiteSpace(operand)) return false;
-            return _operands.Contains(operand.ToLower());
+            return this.operand.Equals(operand, StringComparison.CurrentCultureIgnoreCase);
         }
 
         public void Process(LinkedList<Token> tokens, ParameterExpression paramExpression)
@@ -32,7 +33,7 @@ namespace UrlFilter.ExpressionTypes
                     var tokenValue = current.Value.TokenValue;
                     var leftExpression = current.Previous.Value.OperatorExpression;
                     var rightExpression = current.Next.Value.OperatorExpression;
-                    var resultingExpression = _operators.OperatorExpression(tokenValue, leftExpression, rightExpression);
+                    var resultingExpression = expression(leftExpression, rightExpression);
 
                     current.Value.OperatorExpression = resultingExpression;
                     current.Value.TokenValue = string.Empty;

@@ -1,9 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace UrlFilter.Tests
 {
     class TestDocument
     {
+        public TestDocument(){}
+
+        public TestDocument(int seed, bool includeSubdocument = false)
+        {
+            Value = seed;
+            AnotherValue = Math.Pow(-1, seed);
+            NullableValue = seed % 2 == 0 ? null : (int?)seed;
+            Text = $"Item {seed}";
+            MoreText = $"Item{seed}";
+            if (includeSubdocument)
+            {
+                SubDocument = new TestDocument(seed *100);
+            }            
+        }
         public int Value { get; set; }
         public int? NullableValue { get; set; }
         public double AnotherValue { get; set; }

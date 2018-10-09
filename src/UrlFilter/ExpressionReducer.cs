@@ -9,13 +9,11 @@ namespace UrlFilter
 {
     public class ExpressionReducer
     {
-        private readonly ExpressionOperator _operators;
         private readonly List<IExpressionProcessor> _processors;
         private readonly OperatorPrecedence _precedence;
 
-        public ExpressionReducer(ExpressionOperator operators)
+        public ExpressionReducer()
         {
-            _operators = operators;
             _processors = GetExpressionProcessors();
             _precedence = new OperatorPrecedence();
         }
@@ -24,11 +22,15 @@ namespace UrlFilter
         {
             return new IExpressionProcessor[]
             {
-                new UnaryProcessor(new List<string>{"not"}),
-                new ValueProcessor(new List<string>{"gt", "ge", "lt", "le"}, _operators),
-                new ValueProcessor(new List<string>{"eq", "ne"}, _operators),                
-                new LogicalProcessor(new List<string>{"and"}, _operators),
-                new LogicalProcessor(new List<string>{"or"}, _operators)
+                new UnaryProcessor("not", Expression.Not),
+                new ValueProcessor("gt", Expression.GreaterThan),
+                new ValueProcessor("ge", Expression.GreaterThanOrEqual),
+                new ValueProcessor("lt", Expression.LessThan),
+                new ValueProcessor("le", Expression.LessThanOrEqual),
+                new ValueProcessor("eq", Expression.Equal),
+                new ValueProcessor("ne", Expression.NotEqual),
+                new LogicalProcessor("and", Expression.AndAlso),
+                new LogicalProcessor("or", Expression.OrElse)
             }
             .OrderBy(x => x.ExpressionCategory)
             .ToList();

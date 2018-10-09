@@ -13,8 +13,7 @@ namespace UrlFilter
 
         public WhereExpression()
         {
-            var operators = new ExpressionOperator();
-            _reducer = new ExpressionReducer(operators);
+            _reducer = new ExpressionReducer();
             _validator = new QueryValidator();
         }
         
