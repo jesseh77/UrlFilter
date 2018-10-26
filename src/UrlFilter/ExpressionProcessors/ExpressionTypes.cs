@@ -4,6 +4,8 @@
     {        
         Unary,
         Value,
-        Logical
+        Logical,
+        Property,
+        Constant
     }
 }

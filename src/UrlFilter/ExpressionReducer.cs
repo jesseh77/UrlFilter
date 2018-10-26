@@ -2,36 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using UrlFilter.ExpressionProcessors;
-using UrlFilter.ExpressionTypes;
 
 namespace UrlFilter
 {
     public class ExpressionReducer
     {
-        private readonly Dictionary<string, IExpressionProcessor> _processors;
-
-        public ExpressionReducer()
-        {
-            _processors = GetExpressionProcessors();
-        }
-
-        public Dictionary<string, IExpressionProcessor> GetExpressionProcessors()
-        {
-            return new Dictionary<string, IExpressionProcessor>
-            {
-                {"not", new UnaryProcessor("not", Expression.Not) },
-                {"gt", new ValueProcessor("gt", Expression.GreaterThan) },
-                {"ge", new ValueProcessor("ge", Expression.GreaterThanOrEqual) },
-                {"lt", new ValueProcessor("lt", Expression.LessThan) },
-                {"le", new ValueProcessor("le", Expression.LessThanOrEqual) },
-                {"eq", new ValueProcessor("eq", Expression.Equal) },
-                {"ne", new ValueProcessor("ne", Expression.NotEqual) },
-                {"and", new LogicalProcessor("and", Expression.AndAlso) },
-                {"or", new LogicalProcessor("or", Expression.OrElse) }
-            };
-        }
-
+        private ExpressionProcessor expressionProcessor = new ExpressionProcessor();
         public Expression ProcessQueryText<T>(string queryString, ParameterExpression parameterExpression)
         {
             var segmentExpression = ProcessSegments(queryString, parameterExpression, Enumerable.Empty<ExpressionSegment>());

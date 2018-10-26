@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using UrlFilter.ExpressionProcessors;
 
-namespace UrlFilter.ExpressionTypes
+namespace UrlFilter.ExpressionProcessors
 {
-    public class LogicalProcessor : IExpressionProcessor
+    public class LogicalProcessor : IProcessExpression
     {
         private readonly string operand;
         private Func<Expression, Expression, Expression> expression;

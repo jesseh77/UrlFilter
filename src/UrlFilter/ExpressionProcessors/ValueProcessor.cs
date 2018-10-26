@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace UrlFilter.ExpressionProcessors
 {
-    public class ValueProcessor : IExpressionProcessor
+    public class ValueProcessor : IProcessExpression
     {
         private readonly Func<Expression, Expression, Expression> expression;
         private readonly string operand;

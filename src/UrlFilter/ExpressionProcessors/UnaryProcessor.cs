@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace UrlFilter.ExpressionProcessors
 {
-    public class UnaryProcessor : IExpressionProcessor
+    public class UnaryProcessor : IProcessExpression
     {
         private string operand;
         private readonly Func<Expression, Expression> expression;
