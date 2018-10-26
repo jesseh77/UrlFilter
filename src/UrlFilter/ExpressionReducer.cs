@@ -9,143 +9,110 @@ namespace UrlFilter
 {
     public class ExpressionReducer
     {
-        private readonly List<IExpressionProcessor> _processors;
-        private readonly OperatorPrecedence _precedence;
+        private readonly Dictionary<string, IExpressionProcessor> _processors;
 
         public ExpressionReducer()
         {
             _processors = GetExpressionProcessors();
-            _precedence = new OperatorPrecedence();
         }
 
-        public List<IExpressionProcessor> GetExpressionProcessors()
+        public Dictionary<string, IExpressionProcessor> GetExpressionProcessors()
         {
-            return new IExpressionProcessor[]
+            return new Dictionary<string, IExpressionProcessor>
             {
-                new UnaryProcessor("not", Expression.Not),
-                new ValueProcessor("gt", Expression.GreaterThan),
-                new ValueProcessor("ge", Expression.GreaterThanOrEqual),
-                new ValueProcessor("lt", Expression.LessThan),
-                new ValueProcessor("le", Expression.LessThanOrEqual),
-                new ValueProcessor("eq", Expression.Equal),
-                new ValueProcessor("ne", Expression.NotEqual),
-                new LogicalProcessor("and", Expression.AndAlso),
-                new LogicalProcessor("or", Expression.OrElse)
-            }
-            .OrderBy(x => x.ExpressionCategory)
-            .ToList();
-        }
-
-        public Expression ReduceGroupSegments(List<Token> tokens, ParameterExpression parameterExpression)
-        {
-            while (tokens.Count != 1)
-            {
-                tokens = ProcessGroupPriority(tokens, parameterExpression);
-            }
-            return tokens.Single().OperatorExpression;
-        }
-
-        public List<Token> ProcessGroupPriority(List<Token> tokens, ParameterExpression parameterExpression)
-        {
-            var leftBracket = 0;
-
-            for (var i = 0; i < tokens.Count; i++)
-            {
-                var token = tokens[i];
-                
-                if (token.TokenValue == "(")
-                {
-                    leftBracket = i;
-                }
-                else if (token.TokenValue == ")")
-                {
-                    var groupTokens = tokens.Skip(leftBracket + 1).Take(i - leftBracket - 1).ToList();
-                    var groupExpression = ReduceExpressionSegments(new LinkedList<Token>(groupTokens), parameterExpression);
-                    tokens.RemoveRange(leftBracket, i - leftBracket + 1);
-                    tokens.Insert(leftBracket, new Token { OperatorExpression = groupExpression });
-                    return tokens;
-                }
-            }
-            return new List<Token> { new Token { OperatorExpression = ReduceExpressionSegments(new LinkedList<Token>(tokens), parameterExpression) } };
-        }
-
-        public Expression ReduceExpressionSegments(LinkedList<Token> linkedList, ParameterExpression parameterExpression)
-        {
-            foreach (var processor in _processors)
-            {
-                processor.Process(linkedList, parameterExpression);
-            }
-
-            return linkedList.First.Value.OperatorExpression;
+                {"not", new UnaryProcessor("not", Expression.Not) },
+                {"gt", new ValueProcessor("gt", Expression.GreaterThan) },
+                {"ge", new ValueProcessor("ge", Expression.GreaterThanOrEqual) },
+                {"lt", new ValueProcessor("lt", Expression.LessThan) },
+                {"le", new ValueProcessor("le", Expression.LessThanOrEqual) },
+                {"eq", new ValueProcessor("eq", Expression.Equal) },
+                {"ne", new ValueProcessor("ne", Expression.NotEqual) },
+                {"and", new LogicalProcessor("and", Expression.AndAlso) },
+                {"or", new LogicalProcessor("or", Expression.OrElse) }
+            };
         }
 
         public Expression ProcessQueryText<T>(string queryString, ParameterExpression parameterExpression)
         {
-            var segments = SplitQueryTextSegments(queryString);
-            var tokens = MapSegmentsToTokens(segments);
-            return ReduceGroupSegments(tokens, parameterExpression);
+            var segmentExpression = ProcessSegments(queryString, parameterExpression, Enumerable.Empty<ExpressionSegment>());
+            return segmentExpression.Single().Expression;
         }
 
-        public List<Token> MapSegmentsToTokens(IEnumerable<string> segments)
+        public IEnumerable<ExpressionSegment> ProcessSegments(string queryString, ParameterExpression parameterExpression, IEnumerable<ExpressionSegment> segments)
         {
-            return segments.Select(x => new Token(x)).ToList();
+            var segment = GetNextSegment(queryString, segments);
+            if(IsLastSegment(segment, queryString))
+            {
+                return ProcessSegment(queryString, segment, parameterExpression, segments);
+            }
+
+            var updatedSegments = ProcessSegment(queryString, segment, parameterExpression, segments);
+            return ProcessSegments(queryString, parameterExpression, updatedSegments);
+        }
+
+        private IEnumerable<ExpressionSegment> ProcessSegment(string queryString, ExpressionSegment currentSegment, ParameterExpression parameterExpression, IEnumerable<ExpressionSegment> segments)
+        {
+            //process 
+        }
+
+        public ExpressionSegment GetNextSegment(string queryString, IEnumerable<ExpressionSegment> segments)
+        {
+            var currentIndex = 0;
+            for (int i = 0; i < queryString.Length; i++)
+            {
+                if (segments.Any(segment => ContainsEntirely(segment, currentIndex, i)))
+                {
+                    continue;
+                }
+
+                if (queryString[i].Equals('('))
+                {
+                    currentIndex = i;
+                }
+                
+                if (queryString[i].Equals(')'))
+                {
+                    return new ExpressionSegment { StartIndex = currentIndex, EndIndex = queryString.Length - i };
+                }
+            }
+            return new ExpressionSegment { StartIndex = currentIndex, EndIndex = queryString.Length - 1 };
         }
 
         public IEnumerable<string> SplitQueryTextSegments(string queryString)
         {
-            int segmentStart = 0;
-            char segmentDelimiter = ' ';
-            int length = queryString.Length;
+            const char spaceChar = ' ';
+            const char singleQuote = '\'';
             
-            for (int i = 0; i < length; i++)
+            var query = Uri.UnescapeDataString(queryString);
+            int segmentStart = 0;
+            bool isSegmentQuoted = false;
+            
+            for (int i = 0; i < query.Length; i++)
             {
-                var currentCharacter = queryString[i];
-                
-                if (currentCharacter == '(')
-                {
-                    segmentDelimiter = ' ';
+                if ((i == query.Length - 1) ||
+                    !isSegmentQuoted && query[i].Equals(spaceChar) ||
+                    isSegmentQuoted && query[i].Equals(singleQuote))
+                {                    
+                    isSegmentQuoted = false;
                     segmentStart = i + 1;
-                    yield return currentCharacter.ToString();
-                }
-
-                if (currentCharacter == ')')
-                {
-                    segmentDelimiter = ' ';
-                    yield return queryString.Substring(segmentStart, i - segmentStart);
-                    yield return currentCharacter.ToString();
-                    segmentStart = i + 1;
-                }
-
-                if (currentCharacter == segmentDelimiter)
-                {
-                    var segment = queryString.Substring(segmentStart, i - segmentStart);
-                    segmentDelimiter = ' ';
-                    if(segment.Length != 0)
-                    {
-                        yield return segment;
-                    }
-                    segmentStart = i + 1;
-                    continue;
-                }
-
-                if(currentCharacter == '\'')
-                {
-                    segmentStart = i + 1;
-                    segmentDelimiter = currentCharacter;
-                }
-
-                if (currentCharacter == ' ')
-                {
-                    if(segmentDelimiter == '\'') { continue; }
-                    segmentStart = i + 1;
-                    segmentDelimiter = currentCharacter;
-                }
-
-                if (i == length - 1)
-                {
-                    yield return queryString.Substring(segmentStart);
+                    yield return query.Substring(segmentStart, i - segmentStart);
                 }
             }
+        }
+
+        private static bool ContainsEntirely(ExpressionSegment parent, ExpressionSegment child)
+        {
+            return ContainsEntirely(parent, child.StartIndex, child.EndIndex);
+        }
+
+        private static bool ContainsEntirely(ExpressionSegment parent, int childStartIndex, int childEndIndex)
+        {
+            return parent.StartIndex <= childStartIndex && parent.EndIndex >= childEndIndex;
+        }
+
+        private static bool IsLastSegment(ExpressionSegment segment, string queryString)
+        {
+            return segment.StartIndex == 0 && segment.EndIndex == queryString.Length - 1;
         }
     }
 }
