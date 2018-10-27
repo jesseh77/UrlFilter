@@ -8,6 +8,12 @@ namespace UrlFilter.ExpressionProcessors
     public class ConstantProcessor : IProcessExpression
     {
         public ExpressionCategory ExpressionCategory => ExpressionCategory.Constant;
+        private readonly Func<object, Expression> expression;
+
+        public ConstantProcessor(Func<object, Expression> expression)
+        {
+            this.expression = expression;
+        }
 
         public bool CanProcess(string operand)
         {

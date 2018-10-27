@@ -19,16 +19,11 @@ namespace UrlFilter
             var segment = GetNextSegment(queryString, segments);
             if(IsLastSegment(segment, queryString))
             {
-                return ProcessSegment(queryString, segment, parameterExpression, segments);
+                return expressionProcessor.Process(queryString, segment, parameterExpression, segments.ToList());
             }
 
-            var updatedSegments = ProcessSegment(queryString, segment, parameterExpression, segments);
+            var updatedSegments = expressionProcessor.Process(queryString, segment, parameterExpression, segments.ToList());
             return ProcessSegments(queryString, parameterExpression, updatedSegments);
-        }
-
-        private IEnumerable<ExpressionSegment> ProcessSegment(string queryString, ExpressionSegment currentSegment, ParameterExpression parameterExpression, IEnumerable<ExpressionSegment> segments)
-        {
-            //process 
         }
 
         public ExpressionSegment GetNextSegment(string queryString, IEnumerable<ExpressionSegment> segments)
@@ -52,28 +47,6 @@ namespace UrlFilter
                 }
             }
             return new ExpressionSegment { StartIndex = currentIndex, EndIndex = queryString.Length - 1 };
-        }
-
-        public IEnumerable<string> SplitQueryTextSegments(string queryString)
-        {
-            const char spaceChar = ' ';
-            const char singleQuote = '\'';
-            
-            var query = Uri.UnescapeDataString(queryString);
-            int segmentStart = 0;
-            bool isSegmentQuoted = false;
-            
-            for (int i = 0; i < query.Length; i++)
-            {
-                if ((i == query.Length - 1) ||
-                    !isSegmentQuoted && query[i].Equals(spaceChar) ||
-                    isSegmentQuoted && query[i].Equals(singleQuote))
-                {                    
-                    isSegmentQuoted = false;
-                    segmentStart = i + 1;
-                    yield return query.Substring(segmentStart, i - segmentStart);
-                }
-            }
         }
 
         private static bool ContainsEntirely(ExpressionSegment parent, ExpressionSegment child)
