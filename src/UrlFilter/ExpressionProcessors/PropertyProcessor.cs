@@ -1,30 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
 namespace UrlFilter.ExpressionProcessors
 {
-    public class PropertyProcessor : IProcessExpression
+    public class PropertyProcessor
     {
         public ExpressionCategory ExpressionCategory => ExpressionCategory.Property;
-        private readonly Func<Expression, MethodInfo, Expression> expression;
 
-        public PropertyProcessor(Func<Expression, MethodInfo, Expression> expression)
+        public PropertyProcessor()
         {
-            this.expression = expression;
+
         }
 
         public bool CanProcess(string operand, ParameterExpression paramExpression)
         {
-            Func<Expression, MethodInfo, Expression> item = Expression.Property;
-            throw new NotImplementedException();
+            var propInfo = getPropertyInfoFromPath(operand, paramExpression.Type);
+            return propInfo != null;
         }
 
-        public void Process(ExpressionSegment segment, ParameterExpression paramExpression)
+        private PropertyInfo getPropertyInfoFromPath(string propertyPath, Type type)
         {
-            throw new NotImplementedException();
+            var pathParts = propertyPath.Split('.');
+            PropertyInfo propInfo = null;
+
+            foreach (var path in pathParts)
+            {
+                propInfo = getPropertyInfoFromName(path, type);
+                if (propInfo == null) return null;
+            }
+
+            return propInfo;
+        }
+
+        private PropertyInfo getPropertyInfoFromName(string propertyName, Type type)
+        {
+            var propsInfo = type.GetRuntimeProperties();
+            return propsInfo.FirstOrDefault(x => x.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public void Process(string segment, ParameterExpression paramExpression)
+        {
+            if (CanProcess(segment, paramExpression))
+            {
+                return;
+            }
+            throw new InvalidOperationException($"Property of name {segment} was not found on object of type {paramExpression.Type}");
         }
     }
 }

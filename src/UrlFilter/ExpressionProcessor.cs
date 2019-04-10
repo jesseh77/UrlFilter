@@ -10,7 +10,7 @@ namespace UrlFilter
     public class ExpressionProcessor
     {
         private readonly Dictionary<string, IProcessExpression> _processors;
-        private readonly IProcessExpression propertyProcessor = new PropertyProcessor(Expression.Property);
+        //private readonly IProcessExpression propertyProcessor = new PropertyProcessor(Expression.Property);
         private readonly IProcessExpression constantProcessor = new ConstantProcessor(Expression.Constant);
 
         public ExpressionProcessor()
@@ -28,7 +28,7 @@ namespace UrlFilter
 
             foreach (var segment in propertyAndConstantSegments)
             {
-                propertyProcessor.Process(segment, parameterExpression);
+                //propertyProcessor.Process(segment, parameterExpression);
             }
 
             return null;
