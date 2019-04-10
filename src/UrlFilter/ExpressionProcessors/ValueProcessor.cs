@@ -19,7 +19,7 @@ namespace UrlFilter.ExpressionProcessors
             this.expression = expression;
         }
 
-        public bool CanProcess(string operand)
+        public bool CanProcess(string operand, ParameterExpression paramExpression)
         {
             if (string.IsNullOrWhiteSpace(operand)) return false;
             return this.operand.Contains(operand.ToLower());
@@ -30,7 +30,7 @@ namespace UrlFilter.ExpressionProcessors
             var currentToken = tokens.First;
             while (currentToken.Next != null)
             {
-                if (CanProcess(currentToken.Next.Value.TokenValue))
+                if (CanProcess(currentToken.Next.Value.TokenValue, paramExpression))
                 {
                     var propertyName = currentToken.Value.TokenValue;
 

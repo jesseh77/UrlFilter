@@ -16,13 +16,13 @@ namespace UrlFilter.ExpressionProcessors
             this.expression = expression;
         }
 
-        public bool CanProcess(string operand)
+        public bool CanProcess(string operand, ParameterExpression paramExpression)
         {
             Func<Expression, MethodInfo, Expression> item = Expression.Property;
             throw new NotImplementedException();
         }
 
-        public void Process(LinkedList<Token> tokens, ParameterExpression paramExpression)
+        public void Process(ExpressionSegment segment, ParameterExpression paramExpression)
         {
             throw new NotImplementedException();
         }

@@ -15,9 +15,9 @@ namespace UrlFilter.ExpressionProcessors
             this.expression = expression;
         }
 
-        public bool CanProcess(string operand)
+        public bool CanProcess(string operand, ParameterExpression paramExpression)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public void Process(LinkedList<Token> tokens, ParameterExpression paramExpression)

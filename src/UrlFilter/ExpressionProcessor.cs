@@ -9,7 +9,9 @@ namespace UrlFilter
 {
     public class ExpressionProcessor
     {
-        private readonly List<IProcessExpression> _processors;
+        private readonly Dictionary<string, IProcessExpression> _processors;
+        private readonly IProcessExpression propertyProcessor = new PropertyProcessor(Expression.Property);
+        private readonly IProcessExpression constantProcessor = new ConstantProcessor(Expression.Constant);
 
         public ExpressionProcessor()
         {
@@ -18,32 +20,32 @@ namespace UrlFilter
 
         public IEnumerable<ExpressionSegment> Process(string queryString, ExpressionSegment currentSegment, ParameterExpression parameterExpression, List<ExpressionSegment> segments)
         {
-            var section = SplitQueryTextSegments(queryString, currentSegment.StartIndex, currentSegment.EndIndex).ToList();
+            var activeQuerySegments = SplitQueryTextSegments(queryString, currentSegment.StartIndex, currentSegment.EndIndex).ToList();
 
-            foreach (var processor in _processors)
+            var propertyAndConstantSegments = activeQuerySegments
+                .Where(x => !segments.Any(y => y.ContainsEntirely(x)) && !_processors.ContainsKey(x.SegmentText(queryString)))
+                .ToList();
+
+            foreach (var segment in propertyAndConstantSegments)
             {
-                foreach (var item in section)
-                {
-
-                    if(processor.CanProcess()
-                }
+                propertyProcessor.Process(segment, parameterExpression);
             }
+
+            return null;
         }
-        public List<IProcessExpression> GetExpressionProcessors()
+        public Dictionary<string, IProcessExpression> GetExpressionProcessors()
         {
-            return new List<IProcessExpression>
-            {                
-                new ValueProcessor("gt", Expression.GreaterThan),
-                new ValueProcessor("ge", Expression.GreaterThanOrEqual),
-                new ValueProcessor("lt", Expression.LessThan),
-                new ValueProcessor("le", Expression.LessThanOrEqual),
-                new ValueProcessor("eq", Expression.Equal),
-                new ValueProcessor("ne", Expression.NotEqual),
-                new UnaryProcessor("not", Expression.Not),
-                new LogicalProcessor("and", Expression.AndAlso),
-                new LogicalProcessor("or", Expression.OrElse),
-                new PropertyProcessor(Expression.Property),
-                new ConstantProcessor(Expression.Constant)
+            return new Dictionary<string, IProcessExpression>
+            {
+                {"gt", new ValueProcessor("gt", Expression.GreaterThan) },
+                {"ge", new ValueProcessor("ge", Expression.GreaterThanOrEqual) },
+                {"lt", new ValueProcessor("lt", Expression.LessThan) },
+                {"le", new ValueProcessor("le", Expression.LessThanOrEqual) },
+                {"eq", new ValueProcessor("eq", Expression.Equal) },
+                {"ne", new ValueProcessor("ne", Expression.NotEqual) },
+                {"not", new UnaryProcessor("not", Expression.Not) },
+                {"and", new LogicalProcessor("and", Expression.AndAlso) },
+                {"or", new LogicalProcessor("or", Expression.OrElse) }
             };
         }
 
@@ -56,22 +58,17 @@ namespace UrlFilter
             int segmentStart = start;
             bool isSegmentQuoted = false;
 
-            for (int i = segmentStart; i < end; i++)
+            for (int i = segmentStart; i <= end; i++)
             {
-                if ((i == query.Length - 1) ||
+                if (i == end ||
                     !isSegmentQuoted && query[i].Equals(spaceChar) ||
                     isSegmentQuoted && query[i].Equals(singleQuote))
                 {
-                    isSegmentQuoted = false;
-                    segmentStart = i + 1;
+                    isSegmentQuoted = false;                    
                     yield return new ExpressionSegment { StartIndex = segmentStart, EndIndex = i - 1 };
+                    segmentStart = i + 1;
                 }
             }
-        }
-
-        public static string SegmentText(ExpressionSegment segment, string queryString)
-        {
-            return queryString.Substring(segment.StartIndex, segment.Length);
         }
     }
 }

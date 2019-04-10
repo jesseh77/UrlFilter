@@ -17,7 +17,7 @@ namespace UrlFilter
         public IEnumerable<ExpressionSegment> ProcessSegments(string queryString, ParameterExpression parameterExpression, IEnumerable<ExpressionSegment> segments)
         {
             var segment = GetNextSegment(queryString, segments);
-            if(IsLastSegment(segment, queryString))
+            if(segment.IsLastSegment(queryString))
             {
                 return expressionProcessor.Process(queryString, segment, parameterExpression, segments.ToList());
             }
@@ -31,7 +31,7 @@ namespace UrlFilter
             var currentIndex = 0;
             for (int i = 0; i < queryString.Length; i++)
             {
-                if (segments.Any(segment => ContainsEntirely(segment, currentIndex, i)))
+                if (segments.Any(segment => segment.ContainsEntirely(currentIndex, i)))
                 {
                     continue;
                 }
@@ -47,21 +47,6 @@ namespace UrlFilter
                 }
             }
             return new ExpressionSegment { StartIndex = currentIndex, EndIndex = queryString.Length - 1 };
-        }
-
-        private static bool ContainsEntirely(ExpressionSegment parent, ExpressionSegment child)
-        {
-            return ContainsEntirely(parent, child.StartIndex, child.EndIndex);
-        }
-
-        private static bool ContainsEntirely(ExpressionSegment parent, int childStartIndex, int childEndIndex)
-        {
-            return parent.StartIndex <= childStartIndex && parent.EndIndex >= childEndIndex;
-        }
-
-        private static bool IsLastSegment(ExpressionSegment segment, string queryString)
-        {
-            return segment.StartIndex == 0 && segment.EndIndex == queryString.Length - 1;
         }
     }
 }

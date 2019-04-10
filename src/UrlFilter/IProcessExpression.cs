@@ -7,7 +7,7 @@ namespace UrlFilter
     public interface IProcessExpression
     {
         ExpressionCategory ExpressionCategory { get; }
-        bool CanProcess(string operand);
+        bool CanProcess(string operand, ParameterExpression parameterExpression);
         void Process(LinkedList<Token> tokens, ParameterExpression paramExpression);
     }
 }

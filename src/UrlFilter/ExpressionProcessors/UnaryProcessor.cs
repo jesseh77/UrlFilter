@@ -11,7 +11,7 @@ namespace UrlFilter.ExpressionProcessors
 
         public ExpressionCategory ExpressionCategory => ExpressionCategory.Unary;
 
-        public bool CanProcess(string operand)
+        public bool CanProcess(string operand, ParameterExpression paramExpression)
         {
             if (string.IsNullOrWhiteSpace(operand)) return false;
             return this.operand.Equals(operand, StringComparison.CurrentCultureIgnoreCase);
@@ -28,7 +28,7 @@ namespace UrlFilter.ExpressionProcessors
             var current = tokens.First;
             while (current.Next != null)
             {
-                if (CanProcess(current.Value.TokenValue))
+                if (CanProcess(current.Value.TokenValue, paramExpression))
                 {
                     var nextExpression = current.Next.Value.OperatorExpression;
                     var processedExpression = expression(nextExpression);
