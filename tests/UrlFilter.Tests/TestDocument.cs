@@ -22,6 +22,7 @@ namespace UrlFilter.Tests
         public int Value { get; set; }
         public int? NullableValue { get; set; }
         public double AnotherValue { get; set; }
+        public DateTime ADate { get; set; }
         public string Text { get; set; }
         public string MoreText { get; set; }
         public TestDocument SubDocument { get; set; }
