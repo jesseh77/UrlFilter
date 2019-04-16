@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace UrlFilter.ExpressionProcessors
 {
-    public class LogicalProcessor
+    public class ComparisonProcessor
     {
         private readonly Dictionary<string, ExpressionType> expressionTypeMap = getTypeMap();
         public bool CanProcess(string comparisonType)
@@ -29,10 +29,7 @@ namespace UrlFilter.ExpressionProcessors
                 {"ge", ExpressionType.GreaterThanOrEqual},
                 {"lt", ExpressionType.LessThan},
                 {"le", ExpressionType.LessThanOrEqual},
-                {"ne", ExpressionType.NotEqual},
-                {"not", ExpressionType.Not},
-                {"and", ExpressionType.AndAlso},
-                {"or", ExpressionType.OrElse}
+                {"ne", ExpressionType.NotEqual}
             };
         }
     }
