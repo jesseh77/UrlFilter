@@ -6,14 +6,13 @@ namespace UrlFilter.ExpressionProcessors
 {
     public class ValueProcessor
     {
-        public ConstantExpression Process(string value, PropertyInfo propertyInfo)
+        public ConstantExpression Process(string value, Type propertyType)
         {
-            var type = propertyInfo.PropertyType;
-            if (!isValueType(type)) throw new NotImplementedException($"Type {type.Name} is not valid for a value expression");
+            if (!isValueType(propertyType)) throw new NotImplementedException($"Type {propertyType.Name} is not valid for a value expression");
 
             var trimValue = StripOuterSingleQuotes(value);
-            var convertedValue = ConvertValue(trimValue, type);
-            return Expression.Constant(convertedValue, type);
+            var convertedValue = ConvertValue(trimValue, propertyType);
+            return Expression.Constant(convertedValue, propertyType);
         }
 
         private object ConvertValue(string expressionValue, Type propertyType)

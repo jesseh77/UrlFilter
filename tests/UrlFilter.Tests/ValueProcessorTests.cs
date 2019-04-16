@@ -1,8 +1,5 @@
 ﻿using FluentAssertions;
 using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Text;
 using UrlFilter.ExpressionProcessors;
 using Xunit;
 
@@ -17,7 +14,7 @@ namespace UrlFilter.Tests
             var propertyInfo = new PropertyInfoProvider().GetPropertyInfoFromName("Value", typeof(TestDocument));
             var sut = new ValueProcessor();
 
-            var result = sut.Process(value.ToString(), propertyInfo);
+            var result = sut.Process(value.ToString(), propertyInfo.PropertyType);
 
             result.Value.Should().Be(value);
         }
@@ -29,7 +26,7 @@ namespace UrlFilter.Tests
             var propertyInfo = new PropertyInfoProvider().GetPropertyInfoFromName("Text", typeof(TestDocument));
             var sut = new ValueProcessor();
 
-            var result = sut.Process(value, propertyInfo);
+            var result = sut.Process(value, propertyInfo.PropertyType);
 
             result.Value.Should().Be(value);
         }
@@ -41,7 +38,7 @@ namespace UrlFilter.Tests
             var propertyInfo = new PropertyInfoProvider().GetPropertyInfoFromName("ADate", typeof(TestDocument));
             var sut = new ValueProcessor();
 
-            var result = sut.Process(value, propertyInfo);
+            var result = sut.Process(value, propertyInfo.PropertyType);
 
             result.Value.Should().Be(DateTime.Parse(value));
         }
@@ -52,7 +49,7 @@ namespace UrlFilter.Tests
             var propertyInfo = new PropertyInfoProvider().GetPropertyInfoFromName("SubDocument", typeof(TestDocument));
             var sut = new ValueProcessor();
 
-            sut.Invoking(x => x.Process("value", propertyInfo))
+            sut.Invoking(x => x.Process("value", propertyInfo.PropertyType))
                 .Should().Throw<NotImplementedException>();            
         }
 
@@ -62,7 +59,7 @@ namespace UrlFilter.Tests
             var propertyInfo = new PropertyInfoProvider().GetPropertyInfoFromName("DocumentCollection", typeof(TestDocument));
             var sut = new ValueProcessor();
 
-            sut.Invoking(x => x.Process("value", propertyInfo))
+            sut.Invoking(x => x.Process("value", propertyInfo.PropertyType))
                 .Should().Throw<NotImplementedException>();
         }
     }
