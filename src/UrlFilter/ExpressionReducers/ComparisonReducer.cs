@@ -5,10 +5,16 @@ namespace UrlFilter.ExpressionReducers
 {
     public class ComparisonReducer
     {
-        private ComparisonProcessor comparisonProcessor = new ComparisonProcessor();
-        private PropertyProcessor propertyProcessor = new PropertyProcessor(new PropertyInfoProvider());
-        private ValueProcessor valueProcessor = new ValueProcessor();
+        private IComparisonProcessor comparisonProcessor;
+        private IPropertyProcessor propertyProcessor;
+        private IValueProcessor valueProcessor;
 
+        public ComparisonReducer(IComparisonProcessor comparisonProcessor, IPropertyProcessor propertyProcessor, IValueProcessor valueProcessor)
+        {
+            this.comparisonProcessor = comparisonProcessor;
+            this.propertyProcessor = propertyProcessor;
+            this.valueProcessor = valueProcessor;
+        }
 
         public Expression ReduceComparison(string leftValue, string comparisonOperator, string rightValue, ParameterExpression paramExpression)
         {

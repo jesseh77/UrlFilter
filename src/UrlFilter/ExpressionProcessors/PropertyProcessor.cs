@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace UrlFilter.ExpressionProcessors
 {
-    public class PropertyProcessor
+    public class PropertyProcessor : IPropertyProcessor
     {
         private readonly IProvidePropertyInfo propertyInfo;
 
@@ -18,7 +16,7 @@ namespace UrlFilter.ExpressionProcessors
         {
             var propInfo = propertyInfo.GetPropertyInfoFromPath(operand, paramExpression.Type);
             return propInfo != null;
-        }       
+        }
 
         public Expression Process(string segment, ParameterExpression paramExpression)
         {

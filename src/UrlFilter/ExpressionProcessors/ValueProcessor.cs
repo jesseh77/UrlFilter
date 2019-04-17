@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace UrlFilter.ExpressionProcessors
 {
-    public class ValueProcessor
+    public class ValueProcessor : IValueProcessor
     {
         public ConstantExpression Process(string value, Type propertyType)
         {
@@ -32,7 +32,7 @@ namespace UrlFilter.ExpressionProcessors
             }
             return value;
         }
-        
+
         private bool isValueType(Type type)
         {
             return type.GetTypeInfo().IsValueType || type.Equals(typeof(string)) || type.Equals(typeof(DateTime));
