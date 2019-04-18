@@ -12,4 +12,8 @@
     <Version>1.0.104</Version>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="ExpressionReducers\" />
+  </ItemGroup>
+
 </Project>

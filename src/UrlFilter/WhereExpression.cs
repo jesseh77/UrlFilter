@@ -8,12 +8,10 @@ namespace UrlFilter
     public class WhereExpression : IFilterExpression
     {
         public static readonly IFilterExpression Build = new WhereExpression();
-        private readonly ExpressionReducer _reducer;
         private readonly QueryValidator _validator;
 
         public WhereExpression()
         {
-            _reducer = new ExpressionReducer();
             _validator = new QueryValidator();
         }
         
@@ -22,28 +20,15 @@ namespace UrlFilter
             _validator.ValidateQueryText(queryString);
             var parameterExpression = Expression.Parameter(typeof(T));
 
-            var expression = _reducer.ProcessQueryText<T>(queryString, parameterExpression);
+            Expression expression = null; //get the expression
             return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
         }
 
         public Expression<Func<T, bool>> FromString<T>(string queryString, Expression<Func<T, bool>> expression) where T : class
         {
-            _validator.ValidateQueryText(queryString);
-            var parameterExpression = expression.Parameters.First();
-
-            var left = expression.Body;
-
-            var right = _reducer.ProcessQueryText<T>(queryString, parameterExpression);
-            var netExpression = Expression.And(left, right);
-
-            return Expression.Lambda<Func<T, bool>>(netExpression, parameterExpression);
+            return null;
         }
 
         //public Expression<Func<T, bool>> FromString<T>(string queryString, ParameterExpression parameterExpression, IDictionary<string, Func<string, object, Expression>> customExpressions) where T : class
-        //{
-        //    _validator.ValidateQueryText(queryString);
-        //    var expression = _reducer.ProcessQueryText<T>(queryString, parameterExpression, customExpressions);
-        //    return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
-        //}
     }
 }

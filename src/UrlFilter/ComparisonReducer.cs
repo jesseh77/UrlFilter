@@ -3,7 +3,7 @@ using UrlFilter.ExpressionProcessors;
 
 namespace UrlFilter.ExpressionReducers
 {
-    public class ComparisonReducer
+    public class ComparisonReducer : IComparisonReducer
     {
         private IComparisonProcessor comparisonProcessor;
         private IPropertyProcessor propertyProcessor;
@@ -29,7 +29,7 @@ namespace UrlFilter.ExpressionReducers
 
         private void ProcessExpressions(string leftValue, string rightValue, out Expression leftExpression, out Expression rightExpression, ParameterExpression paramExpression)
         {
-            if(propertyProcessor.CanProcess(leftValue, paramExpression))
+            if (propertyProcessor.CanProcess(leftValue, paramExpression))
             {
                 leftExpression = propertyProcessor.Process(leftValue, paramExpression);
                 rightExpression = valueProcessor.Process(rightValue, leftExpression.Type);
