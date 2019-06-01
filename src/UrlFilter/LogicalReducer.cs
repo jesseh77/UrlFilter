@@ -24,17 +24,20 @@ namespace UrlFilter
         public Expression ReduceLogical(string queryText, ParameterExpression parameterExpression)
         {
             var blockStart = 0;
+            Expression leftExpression = Expression.Empty();
             for (int i = 0; i < queryText.Length; i++)
             {
+                if(blockStart == 0 && i == queryText.Length) { return ProcessBlock(queryText, parameterExpression); }
+
                 var currentChar = queryText[i];
                 if (currentChar.Equals('('))
                 {
-                    blockStart = i;
+                    blockStart = i + 1;
                 }
 
                 if(currentChar.Equals(')'))
                 {
-                    var blockText = new ArraySegment<char>(queryText.ToArray(), blockStart, i - blockStart).ToString();
+                    var blockText = queryText.Substring(blockStart, i - blockStart);
                     var expression = ProcessBlock(blockText, parameterExpression);
                 }
             }
@@ -42,18 +45,18 @@ namespace UrlFilter
             throw new NotImplementedException();
         }
 
-        private Expression ProcessBlock(string blockText, ParameterExpression parameterExpression)
+        public Expression ProcessBlock(string blockText, ParameterExpression parameterExpression, Expression left = null, string expType = "and")
         {
             var segments = blockText.Split(' ');
-            var expressionType = "and";
-            Expression leftExpression = Expression.Empty();
+            var expressionType = expType;
+            Expression leftExpression = left ?? Expression.Empty();
             var skipTo = 0;
             for (int i = 0; i < segments.Length; i++)
             {
                 if (i < skipTo) continue;
                 if(unaryProcessor.CanProcess(segments[i]))
                 {
-                    var comparisonExpression = comparisonReducer.ReduceComparison(segments[i + 1], segments[i + 2], segments[i + 3], parameterExpression);
+                    var comparisonExpression = ReduceSegment(segments, i + 1, parameterExpression);
                     var expression = Expression.Not(comparisonExpression);
 
                     leftExpression = logicalProcessor.Process(expressionType, leftExpression, expression);
@@ -66,15 +69,20 @@ namespace UrlFilter
                         expressionType = segments[i];
                         continue;
                     }
-                    leftExpression = comparisonReducer.ReduceComparison(segments[i - 3], segments[i - 2], segments[i - 1], parameterExpression);
+                    leftExpression = ReduceSegment(segments, i - 3, parameterExpression);
                     expressionType = segments[i];
                 }
                 else if(i == segments.Length - 1)
                 {
-                    leftExpression = comparisonReducer.ReduceComparison(segments[i - 2], segments[i - 1], segments[i], parameterExpression);
+                    leftExpression = ReduceSegment(segments, i - 2, parameterExpression);
                 }
             }
             return leftExpression;
+        }
+
+        private Expression ReduceSegment(string[] segments, int start, ParameterExpression paramExpression)
+        {
+            return comparisonReducer.ReduceComparison(segments[start], segments[start + 1], segments[start + 2], paramExpression);
         }
     }
 }
