@@ -10,12 +10,18 @@ using Xunit;
 namespace UrlFilter.Tests
 {
     public class LogicalReducerTests
-    {
-        [Fact]
-        public void should_reduce_simple_and_operator()
+    {        
+        [Theory]
+        [InlineData("(value gt 3) and (value le 5)", true)]
+        [InlineData("(value gt 3) and value le 5", true)]
+        [InlineData("value gt 3 and (value le 5)", true)]
+        [InlineData("value gt 3 and value le 5", true)]
+        [InlineData("(value gt 3 and value le 5)", true)]
+        [InlineData("(value gt 3 and (value le 5))", true)]
+        [InlineData("((value gt 3) and (value le 5))", true)]
+        public void should_reduce_simple_and_operator(string queryText, bool expected)
         {
             var testDoc = new TestDocument { Value = 4 };
-            var queryText = "(value gt 3) and (value le 5)";
             var sut = generateLogicalReducer();
             var paramExpression = Expression.Parameter(typeof(TestDocument));
 
@@ -23,7 +29,7 @@ namespace UrlFilter.Tests
             var lambda = Expression.Lambda<Func<TestDocument, bool>>(expression, paramExpression).Compile();
             var result = lambda(testDoc);
 
-            result.Should().BeTrue();
+            result.Should().Be(expected);
         }
 
         [Fact]
@@ -41,12 +47,30 @@ namespace UrlFilter.Tests
             result.Should().BeTrue();
         }
 
+        [Fact]
+        public void should_process_expression_block_with_supplied_left_expression()
+        {
+            var testDoc = new TestDocument { Value = 4 };
+            Expression<Func<TestDocument, bool>> exp = x => x.Value <= 5;
+            var paramExpression = Expression.Parameter(typeof(TestDocument));
+            var leftExpression = Expression.Lambda(exp, paramExpression);
+            
+            var queryText = "value gt 3";
+            var sut = generateLogicalReducer();
+
+            var expression = sut.ProcessBlock(queryText, paramExpression, leftExpression, "and");
+            var lambda = Expression.Lambda<Func<TestDocument, bool>>(expression, paramExpression).Compile();
+            var result = lambda(testDoc);
+
+            result.Should().BeTrue();
+        }
+
         private LogicalReducer generateLogicalReducer()
         {
             return new LogicalReducer(
                 new ComparisonReducer(
-                    new ComparisonProcessor(), new PropertyProcessor(
-                        new PropertyInfoProvider()),
+                    new ComparisonProcessor(),
+                    new PropertyProcessor(new PropertyInfoProvider()),
                     new ValueProcessor()),
                 new UnaryProcessor(),
                 new LogicalProcessor());

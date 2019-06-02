@@ -15,7 +15,7 @@ namespace UrlFilter.ExpressionProcessors
             return Expression.Constant(convertedValue, propertyType);
         }
 
-        private object ConvertValue(string expressionValue, Type propertyType)
+        private static object ConvertValue(string expressionValue, Type propertyType)
         {
             if (expressionValue.Equals("null", StringComparison.CurrentCultureIgnoreCase)) { return null; }
 
@@ -33,7 +33,7 @@ namespace UrlFilter.ExpressionProcessors
             return value;
         }
 
-        private bool isValueType(Type type)
+        private static bool isValueType(Type type)
         {
             return type.GetTypeInfo().IsValueType || type.Equals(typeof(string)) || type.Equals(typeof(DateTime));
         }

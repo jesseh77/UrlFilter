@@ -24,25 +24,36 @@ namespace UrlFilter
         public Expression ReduceLogical(string queryText, ParameterExpression parameterExpression)
         {
             var blockStart = 0;
-            Expression leftExpression = Expression.Empty();
+            var depth = 0;
+            Expression currentExpression = Expression.Empty();
             for (int i = 0; i < queryText.Length; i++)
             {
-                if(blockStart == 0 && i == queryText.Length) { return ProcessBlock(queryText, parameterExpression); }
+                if(blockStart == 0 && i == queryText.Length - 1) { return ProcessBlock(queryText, parameterExpression); }
 
                 var currentChar = queryText[i];
                 if (currentChar.Equals('('))
                 {
                     blockStart = i + 1;
+                    depth++;
                 }
 
                 if(currentChar.Equals(')'))
                 {
                     var blockText = queryText.Substring(blockStart, i - blockStart);
-                    var expression = ProcessBlock(blockText, parameterExpression);
+                    depth--;
+                    if(depth == 0)
+                    {
+                        currentExpression = ProcessBracket(blockText, parameterExpression);
+                    }                    
                 }
             }
 
             throw new NotImplementedException();
+        }
+
+        private Expression ProcessBracket(string bracketedExpression, ParameterExpression paramExpression)
+        {
+            return ReduceLogical(bracketedExpression, paramExpression);
         }
 
         public Expression ProcessBlock(string blockText, ParameterExpression parameterExpression, Expression left = null, string expType = "and")

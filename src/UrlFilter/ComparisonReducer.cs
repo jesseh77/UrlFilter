@@ -19,9 +19,8 @@ namespace UrlFilter.ExpressionReducers
         public Expression ReduceComparison(string leftValue, string comparisonOperator, string rightValue, ParameterExpression paramExpression)
         {
             if (!comparisonProcessor.CanProcess(comparisonOperator)) return null;
-            Expression leftExpression = null;
-            Expression rightExpression = null;
-
+            Expression leftExpression;
+            Expression rightExpression;
             ProcessExpressions(leftValue, rightValue, out leftExpression, out rightExpression, paramExpression);
 
             return comparisonProcessor.Process(comparisonOperator, leftExpression, rightExpression);
