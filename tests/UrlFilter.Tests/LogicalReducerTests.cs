@@ -40,7 +40,7 @@ namespace UrlFilter.Tests
             var sut = generateLogicalReducer();
             var paramExpression = Expression.Parameter(typeof(TestDocument));
 
-            var expression = sut.ProcessBlock(queryText, paramExpression);
+            var expression = sut.ProcessBlock(queryText, paramExpression, Expression.Empty(), "and");
             var lambda = Expression.Lambda<Func<TestDocument, bool>>(expression, paramExpression).Compile();
             var result = lambda(testDoc);
 

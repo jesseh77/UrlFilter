@@ -31,7 +31,7 @@ namespace UrlFilter
             Expression currentExpression = Expression.Empty();
             for (int i = 0; i < queryText.Length; i++)
             {
-                if(blockStart == 0 && i == queryText.Length - 1) { return ProcessBlock(queryText, parameterExpression); }
+                if(blockStart == 0 && i == queryText.Length - 1) { return ProcessBlock(queryText, parameterExpression, currentExpression, expressionType); }
 
                 var currentChar = queryText[i];
                 if (currentChar.Equals('('))
@@ -43,6 +43,12 @@ namespace UrlFilter
                         expressionType = subQuery.Last();
                         query = string.Join(" ", subQuery.Take(subQuery.Length - 1));
                     }
+
+                    if(blockEnd > 0 && depth == 0)
+                    {
+                        //a prior expression exists and a new block is starting, process the gap
+                    }
+
                     blockStart = i + 1;
                     depth++;
                 }
@@ -68,11 +74,11 @@ namespace UrlFilter
             return ProcessBlock(query, parameterExpression, currentExpression, expressionType);
         }
 
-        public Expression ProcessBlock(string blockText, ParameterExpression parameterExpression, Expression left = null, string expType = "and")
+        public Expression ProcessBlock(string blockText, ParameterExpression parameterExpression, Expression left, string expType)
         {
             var segments = blockText.Split(' ');
             var expressionType = expType;
-            Expression leftExpression = left ?? Expression.Empty();
+            Expression leftExpression = left;
             var skipTo = 0;
             for (int i = 0; i < segments.Length; i++)
             {
