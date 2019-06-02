@@ -24,7 +24,10 @@ namespace UrlFilter
         public Expression ReduceLogical(string queryText, ParameterExpression parameterExpression)
         {
             var blockStart = 0;
+            var blockEnd = 0;
             var depth = 0;
+            var expressionType = "and";
+            var query = string.Empty;
             Expression currentExpression = Expression.Empty();
             for (int i = 0; i < queryText.Length; i++)
             {
@@ -33,27 +36,36 @@ namespace UrlFilter
                 var currentChar = queryText[i];
                 if (currentChar.Equals('('))
                 {
+                    if(blockStart <= 1 && i != 0)
+                    {
+                        //refactor
+                        var subQuery = queryText.Substring(0, i - 1).Split(' ');
+                        expressionType = subQuery.Last();
+                        query = string.Join(" ", subQuery.Take(subQuery.Length - 1));
+                    }
                     blockStart = i + 1;
                     depth++;
                 }
 
                 if(currentChar.Equals(')'))
-                {
-                    var blockText = queryText.Substring(blockStart, i - blockStart);
+                {                    
                     depth--;
                     if(depth == 0)
                     {
-                        currentExpression = ProcessBracket(blockText, parameterExpression);
+                        blockEnd = i - blockStart;
+                        var blockText = queryText.Substring(blockStart, blockEnd);
+                        currentExpression = ReduceLogical(blockText, parameterExpression);
                     }                    
+                }
+
+                if(i == queryText.Length)
+                {
+                    query = queryText.Substring(blockEnd + 1, i - blockEnd);
                 }
             }
 
-            throw new NotImplementedException();
-        }
-
-        private Expression ProcessBracket(string bracketedExpression, ParameterExpression paramExpression)
-        {
-            return ReduceLogical(bracketedExpression, paramExpression);
+            if(query.Length == 0) { return currentExpression; }
+            return ProcessBlock(query, parameterExpression, currentExpression, expressionType);
         }
 
         public Expression ProcessBlock(string blockText, ParameterExpression parameterExpression, Expression left = null, string expType = "and")
