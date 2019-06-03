@@ -23,7 +23,7 @@ namespace UrlFilter
 
         public Expression ReduceLogical(string queryText, ParameterExpression parameterExpression)
         {
-            var blockStart = 0;
+            var blockStart = -1;
             var blockEnd = 0;
             var depth = 0;
             var expressionType = "and";
@@ -33,12 +33,12 @@ namespace UrlFilter
             Expression currentExpression = Expression.Empty();
             for (int i = 0; i < query.Length; i++)
             {
-                if(blockStart == 0 && i == query.Length - 1) { return ProcessBlock(query, parameterExpression, currentExpression, expressionType); }
+                if(blockStart == -1 && i == query.Length - 1) { return ProcessBlock(query, parameterExpression, currentExpression, expressionType); }
 
                 var currentChar = query[i];
                 if (currentChar.Equals('('))
                 {
-                    if(blockStart == 0 && i != 0)
+                    if(blockStart == -1 && i != 0)
                     {
                         //refactor
                         var subQuerySegments = query.Substring(0, i - 1).Split(' ');
@@ -46,7 +46,10 @@ namespace UrlFilter
                         subQuery = string.Join(" ", subQuerySegments.Take(subQuerySegments.Length - 1));
                     }
 
-                    blockStart = i + 1;
+                    if(depth == 0)
+                    {
+                        blockStart = i + 1;
+                    }                    
 
                     if (blockEnd > 0 && depth == 0)
                     {
@@ -72,9 +75,9 @@ namespace UrlFilter
                 if(currentChar.Equals(')'))
                 {                    
                     depth--;
-                    if(depth == 0)
+                    blockEnd = i - blockStart;
+                    if (depth == 0)
                     {
-                        blockEnd = i - blockStart;
                         var blockText = query.Substring(blockStart, blockEnd);
                         var subExpression = ReduceLogical(blockText, parameterExpression);
                         if(isSubQueryLogical)
