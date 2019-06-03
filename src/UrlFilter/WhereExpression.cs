@@ -1,13 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
+using UrlFilter.ExpressionProcessors;
+using UrlFilter.ExpressionReducers;
 
 namespace UrlFilter
 {
     public class WhereExpression : IFilterExpression
     {
         public static readonly IFilterExpression Build = new WhereExpression();
+        public static readonly ILogicalReducer reducer = BuildLogicalReducer();
+
+        
+
         private readonly QueryValidator _validator;
 
         public WhereExpression()
@@ -20,15 +24,29 @@ namespace UrlFilter
             _validator.ValidateQueryText(queryString);
             var parameterExpression = Expression.Parameter(typeof(T));
 
-            Expression expression = null; //get the expression
+            Expression expression = reducer.ReduceLogical(queryString, parameterExpression);
             return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
         }
 
         public Expression<Func<T, bool>> FromString<T>(string queryString, Expression<Func<T, bool>> expression) where T : class
         {
-            return null;
+            var parameterExpression = expression.Parameters[0];
+            var queryExpression = reducer.ReduceLogical(queryString, parameterExpression);
+            var combinedExpression = Expression.And(expression, queryExpression);
+            return Expression.Lambda<Func<T, bool>>(combinedExpression, parameterExpression);
         }
 
         //public Expression<Func<T, bool>> FromString<T>(string queryString, ParameterExpression parameterExpression, IDictionary<string, Func<string, object, Expression>> customExpressions) where T : class
+
+        private static ILogicalReducer BuildLogicalReducer()
+        {
+            return new LogicalReducer(
+                new ComparisonReducer(
+                    new ComparisonProcessor(),
+                    new PropertyProcessor(new PropertyInfoProvider()),
+                    new ValueProcessor()),
+                new UnaryProcessor(),
+                new LogicalProcessor());
+        }
     }
 }

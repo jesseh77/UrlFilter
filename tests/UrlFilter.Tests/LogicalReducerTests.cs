@@ -13,15 +13,18 @@ namespace UrlFilter.Tests
     {        
         [Theory]
         [InlineData("(value gt 3) and (value le 5)", true)]
+        [InlineData("(value gt 3) and (value le 5 or value ne 1)", true)]
         [InlineData("(value gt 3) and value le 5", true)]
         [InlineData("value gt 3 and (value le 5)", true)]
         [InlineData("value gt 3 and value le 5", true)]
         [InlineData("(value gt 3 and value le 5)", true)]
         [InlineData("(value gt 3 and (value le 5))", true)]
         [InlineData("((value gt 3) and (value le 5))", true)]
+        [InlineData("(value gt 3 and (value le 5)) and text eq 'some text'", true)]
+        [InlineData("((value gt 3) and (value le 5)) and text ne 'some other text'", true)]
         public void should_reduce_simple_and_operator(string queryText, bool expected)
         {
-            var testDoc = new TestDocument { Value = 4 };
+            var testDoc = new TestDocument { Value = 4, Text = "some text" };
             var sut = generateLogicalReducer();
             var paramExpression = Expression.Parameter(typeof(TestDocument));
 

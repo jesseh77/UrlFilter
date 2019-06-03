@@ -8,7 +8,7 @@ using UrlFilter.ExpressionReducers;
 
 namespace UrlFilter
 {
-    public class LogicalReducer
+    public class LogicalReducer : ILogicalReducer
     {
         private readonly IComparisonReducer comparisonReducer;
         private readonly IUnaryProcessor unaryProcessor;
@@ -33,12 +33,12 @@ namespace UrlFilter
             Expression currentExpression = Expression.Empty();
             for (int i = 0; i < query.Length; i++)
             {
-                if(blockStart == -1 && i == query.Length - 1) { return ProcessBlock(query, parameterExpression, currentExpression, expressionType); }
+                if (blockStart == -1 && i == query.Length - 1) { return ProcessBlock(query, parameterExpression, currentExpression, expressionType); }
 
                 var currentChar = query[i];
                 if (currentChar.Equals('('))
                 {
-                    if(blockStart == -1 && i != 0)
+                    if (blockStart == -1 && i != 0)
                     {
                         //refactor
                         var subQuerySegments = query.Substring(0, i - 1).Split(' ');
@@ -46,41 +46,41 @@ namespace UrlFilter
                         subQuery = string.Join(" ", subQuerySegments.Take(subQuerySegments.Length - 1));
                     }
 
-                    if(depth == 0)
+                    if (depth == 0)
                     {
                         blockStart = i + 1;
-                    }                    
+                    }
 
                     if (blockEnd > 0 && depth == 0)
                     {
                         var gapExpression = query.Substring(blockEnd + 2, blockStart - blockEnd - 3);
                         var subQuerySegments = gapExpression.Trim().Split(' ');
-                        if(subQuerySegments.Count() >= 5)
+                        if (subQuerySegments.Count() >= 5)
                         {
                             expressionType = subQuerySegments.Last();
                             subQuery = string.Join(" ", subQuerySegments.Take(gapExpression.Length - 1));
                             currentExpression = ReduceLogical(subQuery, parameterExpression);
                         }
 
-                        if(subQuerySegments.Count() == 1)
+                        if (subQuerySegments.Count() == 1)
                         {
                             expressionType = subQuerySegments[0];
                             isSubQueryLogical = true;
                         }
                     }
-                    
+
                     depth++;
                 }
 
-                if(currentChar.Equals(')'))
-                {                    
+                if (currentChar.Equals(')'))
+                {
                     depth--;
                     blockEnd = i - blockStart;
                     if (depth == 0)
                     {
                         var blockText = query.Substring(blockStart, blockEnd);
                         var subExpression = ReduceLogical(blockText, parameterExpression);
-                        if(isSubQueryLogical)
+                        if (isSubQueryLogical)
                         {
                             currentExpression = logicalProcessor.Process(expressionType, currentExpression, subExpression);
                             isSubQueryLogical = false;
@@ -89,17 +89,17 @@ namespace UrlFilter
                         else
                         {
                             currentExpression = subExpression;
-                        }                        
-                    }                    
+                        }
+                    }
                 }
 
-                if(i == query.Length)
+                if (i == query.Length)
                 {
                     subQuery = query.Substring(blockEnd + 1, i - blockEnd);
                 }
             }
 
-            if(subQuery.Length == 0) { return currentExpression; }
+            if (subQuery.Length == 0) { return currentExpression; }
             return ProcessBlock(subQuery, parameterExpression, currentExpression, expressionType);
         }
 
@@ -120,7 +120,7 @@ namespace UrlFilter
             for (int i = 0; i < segments.Length; i++)
             {
                 if (i < skipTo) continue;
-                if(unaryProcessor.CanProcess(segments[i]))
+                if (unaryProcessor.CanProcess(segments[i]))
                 {
                     var comparisonExpression = ReduceSegment(segments, i + 1, parameterExpression);
                     var expression = Expression.Not(comparisonExpression);
@@ -128,9 +128,9 @@ namespace UrlFilter
                     leftExpression = logicalProcessor.Process(expressionType, leftExpression, expression);
                     skipTo = i + 4;
                 }
-                else if(logicalProcessor.CanProcess(segments[i]))
+                else if (logicalProcessor.CanProcess(segments[i]))
                 {
-                    if(i == skipTo)
+                    if (i == skipTo)
                     {
                         expressionType = segments[i];
                         continue;
@@ -138,7 +138,7 @@ namespace UrlFilter
                     leftExpression = ReduceSegment(segments, i - 3, parameterExpression);
                     expressionType = segments[i];
                 }
-                else if(i == segments.Length - 1)
+                else if (i == segments.Length - 1)
                 {
                     leftExpression = ReduceSegment(segments, i - 2, parameterExpression);
                 }
