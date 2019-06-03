@@ -27,29 +27,45 @@ namespace UrlFilter
             var blockEnd = 0;
             var depth = 0;
             var expressionType = "and";
-            var query = string.Empty;
+            var query = SanitizeQueryText(queryText);
+            var subQuery = string.Empty;
+            var isSubQueryLogical = false;
             Expression currentExpression = Expression.Empty();
-            for (int i = 0; i < queryText.Length; i++)
+            for (int i = 0; i < query.Length; i++)
             {
-                if(blockStart == 0 && i == queryText.Length - 1) { return ProcessBlock(queryText, parameterExpression, currentExpression, expressionType); }
+                if(blockStart == 0 && i == query.Length - 1) { return ProcessBlock(query, parameterExpression, currentExpression, expressionType); }
 
-                var currentChar = queryText[i];
+                var currentChar = query[i];
                 if (currentChar.Equals('('))
                 {
-                    if(blockStart <= 1 && i != 0)
+                    if(blockStart == 0 && i != 0)
                     {
                         //refactor
-                        var subQuery = queryText.Substring(0, i - 1).Split(' ');
-                        expressionType = subQuery.Last();
-                        query = string.Join(" ", subQuery.Take(subQuery.Length - 1));
-                    }
-
-                    if(blockEnd > 0 && depth == 0)
-                    {
-                        //a prior expression exists and a new block is starting, process the gap
+                        var subQuerySegments = query.Substring(0, i - 1).Split(' ');
+                        expressionType = subQuerySegments.Last();
+                        subQuery = string.Join(" ", subQuerySegments.Take(subQuerySegments.Length - 1));
                     }
 
                     blockStart = i + 1;
+
+                    if (blockEnd > 0 && depth == 0)
+                    {
+                        var gapExpression = query.Substring(blockEnd + 2, blockStart - blockEnd - 3);
+                        var subQuerySegments = gapExpression.Trim().Split(' ');
+                        if(subQuerySegments.Count() >= 5)
+                        {
+                            expressionType = subQuerySegments.Last();
+                            subQuery = string.Join(" ", subQuerySegments.Take(gapExpression.Length - 1));
+                            currentExpression = ReduceLogical(subQuery, parameterExpression);
+                        }
+
+                        if(subQuerySegments.Count() == 1)
+                        {
+                            expressionType = subQuerySegments[0];
+                            isSubQueryLogical = true;
+                        }
+                    }
+                    
                     depth++;
                 }
 
@@ -59,19 +75,38 @@ namespace UrlFilter
                     if(depth == 0)
                     {
                         blockEnd = i - blockStart;
-                        var blockText = queryText.Substring(blockStart, blockEnd);
-                        currentExpression = ReduceLogical(blockText, parameterExpression);
+                        var blockText = query.Substring(blockStart, blockEnd);
+                        var subExpression = ReduceLogical(blockText, parameterExpression);
+                        if(isSubQueryLogical)
+                        {
+                            currentExpression = logicalProcessor.Process(expressionType, currentExpression, subExpression);
+                            isSubQueryLogical = false;
+                            subQuery = string.Empty;
+                        }
+                        else
+                        {
+                            currentExpression = subExpression;
+                        }
+                        
                     }                    
                 }
 
-                if(i == queryText.Length)
+                if(i == query.Length)
                 {
-                    query = queryText.Substring(blockEnd + 1, i - blockEnd);
+                    subQuery = query.Substring(blockEnd + 1, i - blockEnd);
                 }
             }
 
-            if(query.Length == 0) { return currentExpression; }
-            return ProcessBlock(query, parameterExpression, currentExpression, expressionType);
+            if(subQuery.Length == 0) { return currentExpression; }
+            return ProcessBlock(subQuery, parameterExpression, currentExpression, expressionType);
+        }
+
+        private string SanitizeQueryText(string queryText)
+        {
+            return queryText.Replace("   ", " ")
+                .Replace("  ", " ")
+                .Replace("( ", "(")
+                .Replace(" )", ")");
         }
 
         public Expression ProcessBlock(string blockText, ParameterExpression parameterExpression, Expression left, string expType)
