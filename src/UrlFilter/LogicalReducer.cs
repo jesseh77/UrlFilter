@@ -86,8 +86,7 @@ namespace UrlFilter
                         else
                         {
                             currentExpression = subExpression;
-                        }
-                        
+                        }                        
                     }                    
                 }
 
