@@ -30,6 +30,7 @@ namespace UrlFilter
             var query = SanitizeQueryText(queryText);
             var subQuery = string.Empty;
             var isSubQueryLogical = false;
+            var isSubQueryNot = false;
             Expression currentExpression = Expression.Empty();
             for (int i = 0; i < query.Length; i++)
             {
@@ -67,6 +68,13 @@ namespace UrlFilter
                             expressionType = subQuerySegments[0];
                             isSubQueryLogical = true;
                         }
+
+                        if(subQuerySegments.Count() == 2)
+                        {
+                            expressionType = subQuerySegments[0];
+                            isSubQueryLogical = true;
+                            isSubQueryNot = true;                            
+                        }
                     }
 
                     depth++;
@@ -80,8 +88,13 @@ namespace UrlFilter
                     {
                         var blockText = query.Substring(blockStart, blockEnd);
                         var subExpression = ReduceLogical(blockText, parameterExpression);
+                        
                         if (isSubQueryLogical)
                         {
+                            if (isSubQueryNot)
+                            {
+                                subExpression = unaryProcessor.Process("not", subExpression);
+                            }
                             currentExpression = logicalProcessor.Process(expressionType, currentExpression, subExpression);
                             isSubQueryLogical = false;
                             subQuery = string.Empty;
@@ -100,10 +113,11 @@ namespace UrlFilter
             }
 
             if (subQuery.Length == 0) { return currentExpression; }
-            return ProcessBlock(subQuery, parameterExpression, currentExpression, expressionType);
+            var resultingExpression = ProcessBlock(subQuery, parameterExpression, currentExpression, expressionType);
+            return resultingExpression;
         }
 
-        private string SanitizeQueryText(string queryText)
+        private static string SanitizeQueryText(string queryText)
         {
             return queryText.Replace("   ", " ")
                 .Replace("  ", " ")

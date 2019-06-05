@@ -15,7 +15,7 @@ namespace UrlFilter.ExpressionProcessors
 
         public Expression Process(string comparisonType, Expression expression)
         {
-            return base.Process(comparisonType, expression, Expression.Empty());
+            return Expression.Not(expression);
         }
     }
 }

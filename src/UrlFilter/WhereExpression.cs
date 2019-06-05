@@ -30,10 +30,7 @@ namespace UrlFilter
 
         public Expression<Func<T, bool>> FromString<T>(string queryString, Expression<Func<T, bool>> expression) where T : class
         {
-            var parameterExpression = expression.Parameters[0];
-            var queryExpression = reducer.ReduceLogical(queryString, parameterExpression);
-            var combinedExpression = Expression.And(expression, queryExpression);
-            return Expression.Lambda<Func<T, bool>>(combinedExpression, parameterExpression);
+            throw new NotImplementedException();
         }
 
         //public Expression<Func<T, bool>> FromString<T>(string queryString, ParameterExpression parameterExpression, IDictionary<string, Func<string, object, Expression>> customExpressions) where T : class
