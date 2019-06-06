@@ -70,6 +70,19 @@ namespace UrlFilter.Tests
             result.Should().BeTrue();
         }
 
+        [Theory]
+        [InlineData("value eq 5", "value-eq-5")]
+        [InlineData("value eq 'five'", "value-eq-five")]
+        [InlineData("value eq 'five oh seven'", "value-eq-five oh seven")]
+        public void should_split_segment_on_space_and_single_quote(string block, string expected)
+        {
+            var sut = generateLogicalReducer();
+
+            var result = string.Join('-', sut.splitSegments(block));
+
+            result.Should().Be(expected);
+        }
+
         private LogicalReducer generateLogicalReducer()
         {
             return new LogicalReducer(

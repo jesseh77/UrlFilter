@@ -34,7 +34,7 @@ namespace UrlFilter
             Expression currentExpression = Expression.Empty();
             for (int i = 0; i < query.Length; i++)
             {
-                if (blockStart == -1 && i == query.Length - 1) { return ProcessBlock(query, parameterExpression, currentExpression, expressionType); }
+                if (blockStart == -1 && i == query.Length - 1) { return ProcessBlock(query, parameterExpression, null, expressionType); }
 
                 var currentChar = query[i];
                 if (currentChar.Equals('('))
@@ -127,7 +127,7 @@ namespace UrlFilter
 
         public Expression ProcessBlock(string blockText, ParameterExpression parameterExpression, Expression left, string expType)
         {
-            var segments = blockText.Split(' ');
+            var segments = splitSegments(blockText).ToArray();
             var expressionType = expType;
             Expression leftExpression = left;
             var skipTo = 0;
@@ -139,6 +139,10 @@ namespace UrlFilter
                     var comparisonExpression = ReduceSegment(segments, i + 1, parameterExpression);
                     var expression = Expression.Not(comparisonExpression);
 
+                    if(leftExpression is null)
+                    {
+                        leftExpression = expression;
+                    }
                     leftExpression = logicalProcessor.Process(expressionType, leftExpression, expression);
                     skipTo = i + 4;
                 }
@@ -158,6 +162,46 @@ namespace UrlFilter
                 }
             }
             return leftExpression;
+        }
+
+        public IEnumerable<string> splitSegments(string blockText)
+        {
+            var isQuoted = false;
+            var blockStart = 0;
+            for (int i = 0; i < blockText.Length; i++)
+            {
+                var currChar = blockText[i];
+                if(currChar.Equals(' '))
+                {
+                    if (isQuoted) { continue; }
+                    var block = blockText.Substring(blockStart, i - blockStart).Trim();
+                    yield return block;
+                    blockStart = i + 1;
+                }
+
+                if(currChar.Equals('\''))
+                {
+                    if(isQuoted)
+                    {
+                        var block = blockText.Substring(blockStart, i - blockStart).Trim();
+                        yield return block;
+                        isQuoted = false;
+                    }
+                    else
+                    {
+                        isQuoted = true;
+                    }
+                    blockStart = i + 1;                    
+                }
+
+                if(i == blockText.Length - 1)
+                {
+                    if (!currChar.Equals('\''))
+                    {
+                        yield return blockText.Substring(blockStart).Trim();
+                    }                    
+                }
+            }
         }
 
         private Expression ReduceSegment(string[] segments, int start, ParameterExpression paramExpression)
