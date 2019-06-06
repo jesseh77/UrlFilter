@@ -149,16 +149,26 @@ namespace UrlFilter
                 else if (logicalProcessor.CanProcess(segments[i]))
                 {
                     if (i == skipTo)
-                    {
-                        expressionType = segments[i];
+                    {                        
                         continue;
                     }
-                    leftExpression = ReduceSegment(segments, i - 3, parameterExpression);
+
+                    var rightExpression = ReduceSegment(segments, i - 3, parameterExpression);
+                    if (leftExpression is null)
+                    {
+                        leftExpression = rightExpression;
+                    }
+                    else
+                    {
+                        leftExpression = logicalProcessor.Process(expressionType, leftExpression, rightExpression);
+                    }
                     expressionType = segments[i];
                 }
                 else if (i == segments.Length - 1)
                 {
-                    leftExpression = ReduceSegment(segments, i - 2, parameterExpression);
+                    var rightExpression = ReduceSegment(segments, i - 2, parameterExpression);
+                    if(leftExpression == null) { return rightExpression; }
+                    leftExpression = logicalProcessor.Process(expressionType, leftExpression, rightExpression);
                 }
             }
             return leftExpression;
@@ -175,8 +185,8 @@ namespace UrlFilter
                 {
                     if (isQuoted) { continue; }
                     var block = blockText.Substring(blockStart, i - blockStart).Trim();
-                    yield return block;
                     blockStart = i + 1;
+                    yield return block;                    
                 }
 
                 if(currChar.Equals('\''))
@@ -196,10 +206,11 @@ namespace UrlFilter
 
                 if(i == blockText.Length - 1)
                 {
-                    if (!currChar.Equals('\''))
+                    var block = blockText.Substring(blockStart).Trim();
+                    if (!string.IsNullOrWhiteSpace(block))
                     {
-                        yield return blockText.Substring(blockStart).Trim();
-                    }                    
+                        yield return block;
+                    }
                 }
             }
         }
