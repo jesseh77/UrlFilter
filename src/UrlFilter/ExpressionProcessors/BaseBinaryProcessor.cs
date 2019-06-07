@@ -23,7 +23,24 @@ namespace UrlFilter.ExpressionProcessors
         {
             if (!CanProcess(comparisonType)) throw new InvalidOperationException($"Comparison type of {comparisonType} is not supported");
             var expressionType = expressionTypeMap[comparisonType.ToLower()];
-            return Expression.MakeBinary(expressionType, leftExpression, rightExpression);
+            var nullExpression = Expression.Constant(null);
+            var member = leftExpression as MemberExpression ?? rightExpression as MemberExpression;
+            Expression expression = null;
+            while (member.Member != null)
+            {
+                if(expression is null)
+                {
+                    expression = Expression.MakeBinary(ExpressionType.NotEqual, member, nullExpression);
+                }
+                else
+                {
+                    var notNullExpression = Expression.MakeBinary(ExpressionType.NotEqual, member, nullExpression);
+                    expression = Expression.MakeBinary(ExpressionType.AndAlso, expression, notNullExpression);
+                }
+                //member = member.Member;
+            }
+           
+            return Expression.AndAlso(expression, Expression.MakeBinary(expressionType, leftExpression, rightExpression));
         }
 
         public virtual Dictionary<string, ExpressionType> AcceptedExpressionTypes()
