@@ -186,7 +186,10 @@ namespace UrlFilter
                     if (isQuoted) { continue; }
                     var block = blockText.Substring(blockStart, i - blockStart).Trim();
                     blockStart = i + 1;
-                    yield return block;                    
+                    if (!string.IsNullOrWhiteSpace(block))
+                    {
+                        yield return block;
+                    }
                 }
 
                 if(currChar.Equals('\''))
@@ -194,7 +197,10 @@ namespace UrlFilter
                     if(isQuoted)
                     {
                         var block = blockText.Substring(blockStart, i - blockStart).Trim();
-                        yield return block;
+                        if (!string.IsNullOrWhiteSpace(block))
+                        {
+                            yield return block;
+                        }
                         isQuoted = false;
                     }
                     else
