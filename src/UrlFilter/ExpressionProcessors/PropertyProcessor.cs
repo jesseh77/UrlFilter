@@ -29,8 +29,16 @@ namespace UrlFilter.ExpressionProcessors
 
         private Expression GetPropertyExpression(string segment, ParameterExpression paramExpression)
         {
-            var propInfo = propertyInfo.GetPropertyInfoFromPath(segment, paramExpression.Type);
-            return Expression.Property(paramExpression, propInfo);
+            var segments = segment.Split('.');
+            Expression propertyExpression = null;
+            var propertyType = paramExpression.Type;
+            foreach (var prop in segments)
+            {
+                var propInfo = propertyInfo.GetPropertyInfoFromPath(prop, propertyType);
+                propertyExpression = Expression.Property(propertyExpression ?? paramExpression, propInfo);       
+            }
+
+            return propertyExpression;
         }
     }
 }
