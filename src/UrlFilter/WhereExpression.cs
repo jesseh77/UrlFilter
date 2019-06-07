@@ -38,11 +38,13 @@ namespace UrlFilter
         private static ILogicalReducer BuildLogicalReducer()
         {
             var propertyInfo = new PropertyInfoProvider();
+            var propertyExpFac = new PropertyExpressionFactory(propertyInfo);
             return new LogicalReducer(
                 new ComparisonReducer(
                     new ComparisonProcessor(),
-                    new PropertyProcessor(propertyInfo, new PropertyExpressionFactory(propertyInfo)),
-                    new ValueProcessor()),
+                    new PropertyProcessor(propertyInfo, propertyExpFac),
+                    new ValueProcessor(),
+                    new NotNullExpressionProcessor(propertyExpFac)),
                 new UnaryProcessor(),
                 new LogicalProcessor());
         }

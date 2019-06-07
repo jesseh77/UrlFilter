@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using UrlFilter.ExpressionProcessors;
 
 namespace UrlFilter
 {
-    public class NotNullExpressionProcessor
+    public class NotNullExpressionProcessor : INotNullExpressionProcessor
     {
         private readonly IPropertyExpressionFactory propertyExpressionFactory;
 
@@ -22,7 +21,7 @@ namespace UrlFilter
             {
                 var propExpression = propertyExpressionFactory.CreatePropertyExpression(segment.Substring(0, index), paramExpression);
                 var notEqualExpression = Expression.NotEqual(propExpression, nullValueExpression);
-                
+
                 netExpression = netExpression is null ? notEqualExpression : Expression.AndAlso(netExpression, notEqualExpression);
             }
             return netExpression;

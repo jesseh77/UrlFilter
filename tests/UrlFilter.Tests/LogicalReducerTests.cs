@@ -89,11 +89,13 @@ namespace UrlFilter.Tests
         private LogicalReducer generateLogicalReducer()
         {
             var propInfo = new PropertyInfoProvider();
+            var propExpFac = new PropertyExpressionFactory(propInfo);
             return new LogicalReducer(
                 new ComparisonReducer(
                     new ComparisonProcessor(),
-                    new PropertyProcessor(propInfo, new PropertyExpressionFactory(propInfo)),
-                    new ValueProcessor()),
+                    new PropertyProcessor(propInfo, propExpFac),
+                    new ValueProcessor(),
+                    new NotNullExpressionProcessor(propExpFac)),
                 new UnaryProcessor(),
                 new LogicalProcessor());
         }

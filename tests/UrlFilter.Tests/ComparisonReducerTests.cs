@@ -51,10 +51,12 @@ namespace UrlFilter.Tests
         private ComparisonReducer constructComparisonReducer()
         {
             var propInfo = new PropertyInfoProvider();
+            var propExpFac = new PropertyExpressionFactory(propInfo);
             return new ComparisonReducer(
                 new ComparisonProcessor(),
                 new PropertyProcessor(propInfo, new PropertyExpressionFactory(propInfo)),
-                new ValueProcessor()
+                new ValueProcessor(),
+                new NotNullExpressionProcessor(propExpFac)
                 );
         }
     }
