@@ -109,7 +109,8 @@ namespace UrlFilter.Tests
 
         private PropertyProcessor CreatePropertyProcessor()
         {
-            return new PropertyProcessor(new PropertyInfoProvider());
+            var propInfo = new PropertyInfoProvider();
+            return new PropertyProcessor(propInfo, new PropertyExpressionFactory(propInfo));
         }
     }
 }

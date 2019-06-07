@@ -50,9 +50,10 @@ namespace UrlFilter.Tests
 
         private ComparisonReducer constructComparisonReducer()
         {
+            var propInfo = new PropertyInfoProvider();
             return new ComparisonReducer(
                 new ComparisonProcessor(),
-                new PropertyProcessor(new PropertyInfoProvider()),
+                new PropertyProcessor(propInfo, new PropertyExpressionFactory(propInfo)),
                 new ValueProcessor()
                 );
         }
