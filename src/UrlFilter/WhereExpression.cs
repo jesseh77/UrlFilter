@@ -36,7 +36,8 @@ namespace UrlFilter
         {
             var parameterExpression = expression.Parameters[0];
             var queryExpression = createExpression(queryString, parameterExpression);
-            return Expression.Lambda<Func<T,bool>>(Expression.AndAlso(expression, queryExpression));
+            var netExpression = Expression.AndAlso(expression.Body, queryExpression);
+            return Expression.Lambda<Func<T,bool>>(netExpression, parameterExpression);
         }
 
         private static ILogicalReducer BuildLogicalReducer()
