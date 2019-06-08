@@ -15,8 +15,9 @@ namespace UrlFilter.PerfTests
         }
 
         [ParamsSource(nameof(Filters))]
-        private string Filter { get; set; }
-        private static IEnumerable<string> Filters()
+        public string Filter { get; set; }
+
+        public IEnumerable<string> Filters()
         {
             return new string[]
             {

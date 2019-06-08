@@ -1,50 +1,57 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
+using UrlFilter.ExpressionProcessors;
+using UrlFilter.ExpressionReducers;
 
 namespace UrlFilter
 {
     public class WhereExpression : IFilterExpression
     {
         public static readonly IFilterExpression Build = new WhereExpression();
-        private readonly ExpressionReducer _reducer;
+        public static readonly ILogicalReducer reducer = BuildLogicalReducer();
+
+        
+
         private readonly QueryValidator _validator;
 
         public WhereExpression()
         {
-            var operators = new ExpressionOperator();
-            _reducer = new ExpressionReducer(operators);
             _validator = new QueryValidator();
         }
         
         public Expression<Func<T,bool>> FromString<T>(string queryString) where T : class
+        {            
+            var parameterExpression = Expression.Parameter(typeof(T));
+            var expression = createExpression(queryString, parameterExpression);
+            return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
+        }
+
+        private Expression createExpression(string queryString, ParameterExpression parameterExpression)
         {
             _validator.ValidateQueryText(queryString);
-            var parameterExpression = Expression.Parameter(typeof(T));
-
-            var expression = _reducer.ProcessQueryText<T>(queryString, parameterExpression);
-            return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
+            return reducer.ReduceLogical(queryString, parameterExpression);
         }
 
         public Expression<Func<T, bool>> FromString<T>(string queryString, Expression<Func<T, bool>> expression) where T : class
         {
-            _validator.ValidateQueryText(queryString);
-            var parameterExpression = expression.Parameters.First();
-
-            var left = expression.Body;
-
-            var right = _reducer.ProcessQueryText<T>(queryString, parameterExpression);
-            var netExpression = Expression.And(left, right);
-
-            return Expression.Lambda<Func<T, bool>>(netExpression, parameterExpression);
+            var parameterExpression = expression.Parameters[0];
+            var queryExpression = createExpression(queryString, parameterExpression);
+            var netExpression = Expression.AndAlso(expression.Body, queryExpression);
+            return Expression.Lambda<Func<T,bool>>(netExpression, parameterExpression);
         }
 
-        //public Expression<Func<T, bool>> FromString<T>(string queryString, ParameterExpression parameterExpression, IDictionary<string, Func<string, object, Expression>> customExpressions) where T : class
-        //{
-        //    _validator.ValidateQueryText(queryString);
-        //    var expression = _reducer.ProcessQueryText<T>(queryString, parameterExpression, customExpressions);
-        //    return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
-        //}
+        private static ILogicalReducer BuildLogicalReducer()
+        {
+            var propertyInfo = new PropertyInfoProvider();
+            var propertyExpFac = new PropertyExpressionFactory(propertyInfo);
+            return new LogicalReducer(
+                new ComparisonReducer(
+                    new ComparisonProcessor(),
+                    new PropertyProcessor(propertyInfo, propertyExpFac),
+                    new ValueProcessor(),
+                    new NotNullExpressionProcessor(propertyExpFac)),
+                new UnaryProcessor(),
+                new LogicalProcessor());
+        }
     }
 }
