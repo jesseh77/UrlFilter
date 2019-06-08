@@ -26,7 +26,7 @@ namespace UrlFilter.Tests
         [InlineData(10, "not value eq 3", new [] {1,2,4,5,6,7,8,9,10})]
         [InlineData(10, "not value gt 7", new [] {1,2,3,4,5,6,7})]
         [InlineData(10, "not value eq 3 and value lt 4", new [] {1,2})]
-        [InlineData(10, "value eq 3 or value eq 5 and value gt 4", new [] {3,5})]
+        [InlineData(10, "value eq 3 or value eq 5 and value gt 4", new [] {5})]
         [InlineData(10, "(value eq 3 or value eq 5) and value gt 4", new [] {5})]
         [InlineData(10, "((value eq 3 or value eq 5) and value gt 4) or value eq 1", new[] { 1, 5 })]
         [InlineData(10, "anothervalue eq 1 and (value eq 3 or value eq 4)", new[] { 4 })]
@@ -41,8 +41,8 @@ namespace UrlFilter.Tests
         public void should_return_match_count(int qty, string query, int[] expectedValues)
         {
             var testDocs = GetTestDocuments(qty);
-
             var expression = WhereExpression.Build.FromString<TestDocument>(query);
+            
             var result = testDocs.Where(expression).ToList();
 
             result.Select(x => x.Value).Should().BeEquivalentTo(expectedValues);

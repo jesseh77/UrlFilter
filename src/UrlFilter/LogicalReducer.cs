@@ -27,7 +27,7 @@ namespace UrlFilter
             var blockEnd = 0;
             var depth = 0;
             var expressionType = "and";
-            var query = SanitizeQueryText(queryText);
+            var query = queryText;
             var subQuery = string.Empty;
             var isSubQueryLogical = false;
             var isSubQueryNot = false;
@@ -106,9 +106,9 @@ namespace UrlFilter
                     }
                 }
 
-                if (i == query.Length)
+                if (i == query.Length - 1 && !currentChar.Equals(')'))
                 {
-                    subQuery = query.Substring(blockEnd + 1, i - blockEnd);
+                    subQuery = query.Substring(blockEnd + 2).Trim();
                 }
             }
 
@@ -117,20 +117,12 @@ namespace UrlFilter
             return resultingExpression;
         }
 
-        private static string SanitizeQueryText(string queryText)
-        {
-            return queryText.Replace("   ", " ")
-                .Replace("  ", " ")
-                .Replace("( ", "(")
-                .Replace(" )", ")");
-        }
-
         public Expression ProcessBlock(string blockText, ParameterExpression parameterExpression, Expression left, string expType)
         {
             var segments = splitSegments(blockText).ToArray();
             var expressionType = expType;
             Expression leftExpression = left;
-            var skipTo = 0;
+            var skipTo = -1;
             for (int i = 0; i < segments.Length; i++)
             {
                 if (i < skipTo) continue;
@@ -138,12 +130,7 @@ namespace UrlFilter
                 {
                     var comparisonExpression = ReduceSegment(segments, i + 1, parameterExpression);
                     var expression = Expression.Not(comparisonExpression);
-
-                    if(leftExpression is null)
-                    {
-                        leftExpression = expression;
-                    }
-                    leftExpression = logicalProcessor.Process(expressionType, leftExpression, expression);
+                    leftExpression = leftExpression is null ? expression : logicalProcessor.Process(expressionType, leftExpression, expression);
                     skipTo = i + 4;
                 }
                 else if (logicalProcessor.CanProcess(segments[i]))
@@ -153,15 +140,19 @@ namespace UrlFilter
                         continue;
                     }
 
-                    var rightExpression = ReduceSegment(segments, i - 3, parameterExpression);
-                    if (leftExpression is null)
+                    Expression rightExpression;
+                    if (i == 0)
                     {
-                        leftExpression = rightExpression;
+                        rightExpression = ReduceSegment(segments, i + 1, parameterExpression);
+                        expressionType = segments[i];
+                        skipTo = i + 4;
                     }
                     else
                     {
-                        leftExpression = logicalProcessor.Process(expressionType, leftExpression, rightExpression);
+                        rightExpression = ReduceSegment(segments, i - 3, parameterExpression);
                     }
+
+                    leftExpression = leftExpression is null ? rightExpression : logicalProcessor.Process(expressionType, leftExpression, rightExpression);
                     expressionType = segments[i];
                 }
                 else if (i == segments.Length - 1)
