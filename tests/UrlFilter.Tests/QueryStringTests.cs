@@ -61,7 +61,7 @@ namespace UrlFilter.Tests
             Assert.Throws<QueryStringException>(action);
         }
 
-        [Fact(Skip = "not yet implemented")]
+        [Fact]
         public void should_create_expression_from_existing_expression()
         {
             Expression<Func<TestDocument, bool>> expression = x => x.Value > 3;

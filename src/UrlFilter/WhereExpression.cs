@@ -20,20 +20,24 @@ namespace UrlFilter
         }
         
         public Expression<Func<T,bool>> FromString<T>(string queryString) where T : class
+        {            
+            var parameterExpression = Expression.Parameter(typeof(T));
+            var expression = createExpression(queryString, parameterExpression);
+            return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
+        }
+
+        private Expression createExpression(string queryString, ParameterExpression parameterExpression)
         {
             _validator.ValidateQueryText(queryString);
-            var parameterExpression = Expression.Parameter(typeof(T));
-
-            Expression expression = reducer.ReduceLogical(queryString, parameterExpression);
-            return Expression.Lambda<Func<T, bool>>(expression, parameterExpression);
+            return reducer.ReduceLogical(queryString, parameterExpression);
         }
 
         public Expression<Func<T, bool>> FromString<T>(string queryString, Expression<Func<T, bool>> expression) where T : class
         {
-            throw new NotImplementedException();
+            var parameterExpression = expression.Parameters[0];
+            var queryExpression = createExpression(queryString, parameterExpression);
+            return Expression.Lambda<Func<T,bool>>(Expression.AndAlso(expression, queryExpression));
         }
-
-        //public Expression<Func<T, bool>> FromString<T>(string queryString, ParameterExpression parameterExpression, IDictionary<string, Func<string, object, Expression>> customExpressions) where T : class
 
         private static ILogicalReducer BuildLogicalReducer()
         {
