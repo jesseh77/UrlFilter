@@ -20,7 +20,15 @@ namespace UrlFilter.ExpressionProcessors
             if (expressionValue.Equals("null", StringComparison.CurrentCultureIgnoreCase)) { return null; }
 
             Type t = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
-            var convertedValue = Convert.ChangeType(expressionValue, t);
+
+            object convertedValue;
+            if (propertyType.IsEnum)
+            {
+                convertedValue = Enum.Parse(t, expressionValue);
+            }
+            else
+                convertedValue = Convert.ChangeType(expressionValue, t);
+
             return convertedValue;
         }
 

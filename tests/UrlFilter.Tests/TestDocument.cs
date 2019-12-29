@@ -19,6 +19,7 @@ namespace UrlFilter.Tests
                 SubDocument = new TestDocument(seed *100);
             }            
         }
+
         public int Value { get; set; }
         public int? NullableValue { get; set; }
         public double AnotherValue { get; set; }
