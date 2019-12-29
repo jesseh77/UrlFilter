@@ -88,7 +88,15 @@ namespace UrlFilter.ExpressionProcessors
             if (expressionValue.Equals("null", StringComparison.CurrentCultureIgnoreCase)) { return null; }
 
             Type t = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
-            var convertedValue = Convert.ChangeType(expressionValue, t);
+
+            object convertedValue;
+            if (propertyType.IsEnum)
+            {
+                convertedValue = Enum.Parse(t, expressionValue);
+            }
+            else
+                convertedValue = Convert.ChangeType(expressionValue, t);
+
             return convertedValue;
         }
 
@@ -114,6 +122,6 @@ namespace UrlFilter.ExpressionProcessors
                 return value.Substring(1, value.Length - 2);
             }
             return value;
-        }        
+        }
     }
 }

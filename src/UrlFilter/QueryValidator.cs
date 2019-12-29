@@ -7,7 +7,6 @@ namespace UrlFilter
         internal void ValidateQueryText(string queryString)
         {
             ValidateParenthesis(queryString);
-
         }
 
         private static void ValidateParenthesis(string queryString)

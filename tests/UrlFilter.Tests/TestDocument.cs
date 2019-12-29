@@ -11,5 +11,13 @@ namespace UrlFilter.Tests
         public string MoreText { get; set; }
         public TestDocument SubDocument { get; set; }
         public List<TestDocument> DocumentCollection { get; set; }
+        public State State { get; set; }
+    }
+
+    enum State
+    {
+        StateOne,
+        StateTwo,
+        StateThree
     }
 }
