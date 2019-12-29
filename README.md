@@ -1,6 +1,6 @@
-## UrlQuery
+## UrlFilter
 
-This library converts API filter expressions in the form of `item eq 7 or value gt 17` into linq expressions to query a datasource
+This library converts API filter expressions in the form of `item eq 7 or value gt 17` into a linq expression to query a datasource
 
 ## Supported operators
 

@@ -1,15 +1,13 @@
-﻿using System;
-
-namespace UrlFilter
+﻿namespace UrlFilter
 {
-    internal class QueryValidator
+    public class QueryValidator
     {
-        internal void ValidateQueryText(string queryString)
+        public void ValidateQueryText(string queryString)
         {
             ValidateParenthesis(queryString);
         }
 
-        private static void ValidateParenthesis(string queryString)
+        public void ValidateParenthesis(string queryString)
         {
             var openParenCount = 0;
             var closedParenCount = 0;
@@ -40,13 +38,6 @@ namespace UrlFilter
             if (openParenCount != closedParenCount)
                 throw new QueryStringException(
                     "Query string must contain the same number of open '(' and close ')' parenthesis");
-        }
-    }
-
-    public class QueryStringException : Exception
-    {
-        public QueryStringException(string message) : base(message)
-        {
         }
     }
 }
